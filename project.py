@@ -15,8 +15,8 @@ window.title("Video Game Poker")
 username = StringVar()
 #Creates a StringVar for password to be used when logging in.
 password = StringVar()
-passwordhint = input("What do you want your password hint to be: ")
-userlist = 
+#passwordhint = input("What do you want your password hint to be: ")
+userList = []
 
 
 #Create user class
@@ -55,6 +55,7 @@ class Player:
 
     #Checks the password hint of the Player
     def passwordhint(self):
+        return
 
 #create game class
 class Game:
@@ -123,8 +124,7 @@ class Game:
         print(password.get())
         return
 
-test = []
-game = Game(test)
+game = Game(userList)
 
 #Starts the program
 window.mainloop()
