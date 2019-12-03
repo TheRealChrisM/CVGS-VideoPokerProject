@@ -188,7 +188,7 @@ class Game:
         forgotPasswordInput = StringVar()
         passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText)
         passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
-        passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = check
+        passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = checkPassword)
         return
                 
         return
