@@ -11,7 +11,8 @@ window.title("Video Game Poker")
 
 #Create general variables
 passwordhint = input("What do you want your password hint to be: ")
-userlist = 
+userlist = ["Mickey Mouse", 
+
 
 #Create user class
 class Player:
@@ -48,22 +49,11 @@ class Player:
     def getpasswordhint(self):
         return self._passwordhint
 
-    #Checks the password hint of the Player
     def passwordhint(self):
         
         
         
         
-        
-
-        
-        
-
-    
-
-    
-    
-
 #create game class
 class Game:
     #Constructs the Game Object with an input of a list of users.
