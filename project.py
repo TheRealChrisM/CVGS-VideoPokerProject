@@ -17,6 +17,8 @@ forgotPasswordFrame = Frame(window)
 username = StringVar()
 #Creates a StringVar for password to be used when logging in.
 password = StringVar()
+#Creates a stringVar for the response to a forgotten password screen.
+forgotPasswordInput = StringVar()
 #passwordhint = input("What do you want your password hint to be: ")
 userList = []
 
@@ -55,7 +57,7 @@ class Player:
         return self.__password
     #Fetches the password hint question for the Player
     def getpasswordhintQuestion(self):
-        return self._passwordhintQuestion
+        return self.__passwordhintQuestion
 
     #Checks the password hint of the Player
     def passwordhint(self):
@@ -142,17 +144,22 @@ class Game:
             messagebox.showinfo("User Not Found", "User could not be found.")
             self.userLogin()
         passwordHintPromptText = savedUser.getpasswordhintQuestion()
-        forgotPasswordInput = StringVar()
-        passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText)
+        passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText, wraplength = 250, justify = LEFT, pady = 5)
         passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
-        passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = checkPassword)
+        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPassword)
+        passwordHintPromptLabel.grid(row = 0, column = 0)
+        passwordHintEntry.grid(row = 1, column = 0)
+        passwordHintButton.grid(row = 2, column = 0)
+        forgotPasswordFrame.pack()
         return
-                
+    
+    def checkPassword(self):   
         return
+    
 #Add default users
 userList.append(Player("King", "Howard", "kh", "cvgs", "Is Computer Science a real Science?", "True"))
 userList.append(Player("Mickey", "Mouse", "mmouse", "Disney", "Where I work.", "Disney"))
-
+userList.append(Player("John", "Doe", "jd", "bruh", "This is a test to see how long you can make password hints before things start getting weird so that we don't loose points for super duper long password hints.", "bruh"))
 game = Game(userList)
 
 #Starts the program
