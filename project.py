@@ -48,7 +48,10 @@ class Player:
     def getpasswordhint(self):
         return self._passwordhint
 
+    #Checks the password hint of the Player
     def passwordhint(self):
+        
+        
         
         
         
