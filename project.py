@@ -11,7 +11,15 @@ window.title("Video Game Poker")
 
 #Create general variables
 passwordhint = input("What do you want your password hint to be: ")
-userlist = ["Mickey Mouse", 
+
+
+#Creates a StringVar for username to be used when logging in.
+username = StringVar()
+#Creates a StringVar for password to be used when logging in.
+password = StringVar()
+#passwordhint = input("What do you want your password hint to be: ")
+userList = []
+
 
 
 #Create user class
@@ -44,47 +52,83 @@ class Player:
     def password(self):
         self.__password = password
         return self.__password
-
     #Fetches the password hint for the Player
     def getpasswordhint(self):
         return self._passwordhint
-
-    def passwordhint(self):
-        
-        
+   
+    def setpasswordhint(self):
+        self.__passwordhint = newpassword
+        return self.__passwordhint
         
         
 #create game class
 class Game:
     #Constructs the Game Object with an input of a list of users.
-    def __init__(userList):
+    def __init__(self, userList):
         #Saves the userList as a variable called users.
-        users = userList
+        self.__users = userList
         #Sets a placeholder variable for a logged in user.
-        currentUser = None
+        self.__currentUser = None
         #A list of cards that have been drawn, False = Not Drawn & True = Drawn
-        drawnCards = []
+        self.__drawnCards = []
         #Goes through 0 to 51 setting it to i
         for i in range(52):
             #Sets the value of drawnCards[i] to False to represent an undrawn card.
-            drawnCards.append(False)
+            self.__drawnCards.append(False)
         #Creates a list that will be used to hold card images.
-        cardDeck = []
+        self.__cardDeck = []
         #Goes through 0 to 51 setting it to i
         for i in range(52):
             #Adds 1 to i then based on the number it will save that card image in the deck.
-            cardDeck.append(ImageTK.PhotoImage(file="card/"+str((i+1))+".gif"))
+            self.__cardDeck.append(ImageTk.PhotoImage(file="card/"+str((i+1))+".gif"))
         #Save the card background to be used.
-        cardBackground = ImageTK.PhotoImage(file="card/b2fv.gif")
+        self.__cardBackground = ImageTk.PhotoImage(file="card/b2fv.gif")
         #Moves to the function which allows a user to login.
-        self.userLogin(self.users)
+        self.userLogin(self.__users)
         return
     
     #Processes a user login event.
-    def userLogin(users):
+    def userLogin(self, users):
         #Creates a frame to store all of the widgets related to logging in.
         loginFrame = Frame(window)
+        #Sets window title to "Login".
+        window.title("Login")
+        #Sets window width and height to 
+        window.geometry("250x150")
+        #Creates a Login Label.
+        loginLabel = Label(loginFrame, text = "LOGIN", font=("times new roman bold", 16))
+        #Creates a Username label.
+        usernameLabel = Label(loginFrame, text = "Username: ")
+        #Creates a Password Label.
+        passwordLabel = Label(loginFrame, text = "Password: ")
+        #Allows the user to input the username.
+        usernamePrompt = Entry(loginFrame, textvariable = username)
+        #Allows the user to input the password.
+        passwordPrompt = Entry(loginFrame, textvariable = password, show = "*")
+        #Creates a submit button that runs the processLogin function when run.
+        submitButton = Button(loginFrame, text = "SUBMIT", command = self.processLogin)
+        #Grids the Login screen label.
+        loginLabel.grid(row = 0, columnspan = 2, pady = 5)
+        #Grids the username label.
+        usernameLabel.grid(row = 1, column = 0, pady = 10)
+        #Grids the password label.
+        passwordLabel.grid(row = 2, column = 0, pady = 10)
+        #Grids the username entry box.
+        usernamePrompt.grid(row = 1, column = 1)
+        #Grids the password entry box.
+        passwordPrompt.grid(row = 2, column = 1)
+        #Grids the submit login button.
+        submitButton.grid(row = 3, columnspan = 2)
+        #Packs the login frame into the window.
+        loginFrame.pack()
+        return
 
+    def processLogin(self):
+        print(username.get())
+        print(password.get())
+        return
+
+game = Game(userList)
 
 #Starts the program
 window.mainloop()
