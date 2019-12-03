@@ -8,28 +8,29 @@ from PIL import ImageTk
 #Create Tkinter window variables
 window = Tk()
 window.title("Video Game Poker")
-
+#Creates a frame to store all of the widgets related to logging in.
+loginFrame = Frame(window)
+forgotPasswordFrame = Frame(window)
 #Create general variables
 passwordhint = input("What do you want your password hint to be: ")
-
-
 #Creates a StringVar for username to be used when logging in.
 username = StringVar()
 #Creates a StringVar for password to be used when logging in.
 password = StringVar()
 #passwordhint = input("What do you want your password hint to be: ")
 userList = []
-
-
-
 #Create user class
 class Player:
     #Initializes variables within the Player class
-    def __init__(self, fn = "first", ln = "Last", b = 100, ph = "passwordhint"):
+    def __init__(self, fn = "first", ln = "Last", user = "username", pw = "password", pq = "passwordhintQuestion", ph = "passwordhint", b = 100):
         self.__firstname = fn
         self.__lastname = ln
+        self.__username = user
+        self.__password = pw
         self.__balance = b
+        self.__passwordhintQuestion = pq
         self.__passwordhint = ph
+        return
 
     #Returns first name of the player
     def getfirstname(self):
@@ -44,12 +45,11 @@ class Player:
         return self.__balance
 
    #Returns username of the player
-    def username(self):
-        self.__username = username
+    def getusername(self):
         return self.__username
 
    #Returns Password of the Player
-    def password(self):
+    def getpassword(self):
         self.__password = password
         return self.__password
     #Fetches the password hint for the Player
@@ -59,8 +59,14 @@ class Player:
     def setpasswordhint(self):
         self.__passwordhint = newpassword
         return self.__passwordhint
-        
-        
+    #Fetches the password hint question for the Player
+    def getpasswordhintQuestion(self):
+        return self._passwordhintQuestion
+
+    #Checks the password hint of the Player
+    def passwordhint(self):
+        return
+
 #create game class
 class Game:
     #Constructs the Game Object with an input of a list of users.
@@ -84,13 +90,48 @@ class Game:
         #Save the card background to be used.
         self.__cardBackground = ImageTk.PhotoImage(file="card/b2fv.gif")
         #Moves to the function which allows a user to login.
-        self.userLogin(self.__users)
+        self.userLogin()
         return
+
+    #Creates a function that draws a random card between 0 and 51
+    def newcard():
+        newcard = random.randint(0,51)
+        return newcard
+
+    #Adds card to a player's hand
+    def addcard(self, newcard):
+        self.__cardDeck.append(newcard)
+
+    #Creates a function that returns True if the card has been selected
+    def draw(newcard):
+        return cardDeck[newcard]
+
+    #Resets Cards that have been drawn to help shuffle the deck 
+    def cardshuffle():
+        for i in range(52):
+            cardDeck[i] = False
+        
+    #Deals a certain amount of cards to the players
+    def deal(listofcards, numofcards):
+        i = numofcards
+        while i > 0 and False in carddeck:
+            drawcard = newcard()
+            if not(draw(drawcard)):
+                listofcards.addcard(Deck(drawcard))
+                carddeck[drawcard] = True
+                i -= 1
+                return
+
+    #Returns Face Down Card
+    def getcardbackground(self):
+        return self.__cardBackground
+
+    #Adds and Returns New Card 
+    def getcarddeck(self):
+        return self.__cardDeck
     
     #Processes a user login event.
-    def userLogin(self, users):
-        #Creates a frame to store all of the widgets related to logging in.
-        loginFrame = Frame(window)
+    def userLogin(self):
         #Sets window title to "Login".
         window.title("Login")
         #Sets window width and height to 
@@ -107,6 +148,8 @@ class Game:
         passwordPrompt = Entry(loginFrame, textvariable = password, show = "*")
         #Creates a submit button that runs the processLogin function when run.
         submitButton = Button(loginFrame, text = "SUBMIT", command = self.processLogin)
+        #Creates a button to switch to the forgot password screen.
+        forgotPasswordButton = Button(loginFrame, text = "Forgot Password", command = self.forgotPassword)
         #Grids the Login screen label.
         loginLabel.grid(row = 0, columnspan = 2, pady = 5)
         #Grids the username label.
@@ -118,7 +161,8 @@ class Game:
         #Grids the password entry box.
         passwordPrompt.grid(row = 2, column = 1)
         #Grids the submit login button.
-        submitButton.grid(row = 3, columnspan = 2)
+        submitButton.grid(row = 3, column = 0)
+        forgotPasswordButton.grid(row = 3, column = 1)
         #Packs the login frame into the window.
         loginFrame.pack()
         return
@@ -127,6 +171,30 @@ class Game:
         print(username.get())
         print(password.get())
         return
+
+    def forgotPassword(self):
+        loginFrame.pack_forget()
+        selectedUser = username.get()
+        savedUser = None
+        userFound = False
+        for i in range(len(userList)):
+                if (userList[i].getusername() == selectedUser):
+                    userFound = True
+                    savedUser = userList[i]
+        if not userFound:
+            messagebox.showinfo("User Not Found", "User could not be found.")
+            self.userLogin()
+        passwordHintPromptText = savedUser.getpasswordhintQuestion()
+        forgotPasswordInput = StringVar()
+        passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText)
+        passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
+        passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = check
+        return
+                
+        return
+#Add default users
+userList.append(Player("King", "Howard", "kh", "cvgs", "Is Computer Science a real Science?", "True"))
+userList.append(Player("Mickey", "Mouse", "mmouse", "Disney", "Where I work.", "Disney"))
 
 game = Game(userList)
 
