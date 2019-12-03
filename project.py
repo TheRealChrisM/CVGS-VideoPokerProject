@@ -3,7 +3,7 @@
 #Video Poker Project
 
 from tkinter import *
-#from PIL import ImageTk
+from PIL import ImageTk
 
 #Create Tkinter window variables
 window = Tk()
