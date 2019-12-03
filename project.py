@@ -7,20 +7,26 @@ from PIL import ImageTk
 
 #Create Tkinter window variables
 window = Tk()
+window.title("Video Game Poker")
 
 #Create general variables
+
 #Creates a StringVar for username to be used when logging in.
 username = StringVar()
 #Creates a StringVar for password to be used when logging in.
 password = StringVar()
+passwordhint = input("What do you want your password hint to be: ")
+userlist = 
+
 
 #Create user class
 class Player:
     #Initializes variables within the Player class
-    def __init__(self, fn = "first", ln = "Last", b = 100):
+    def __init__(self, fn = "first", ln = "Last", b = 100, ph = "passwordhint"):
         self.__firstname = fn
         self.__lastname = ln
         self.__balance = b
+        self.__passwordhint = ph
 
     #Returns first name of the player
     def getfirstname(self):
@@ -43,7 +49,12 @@ class Player:
     def password(self):
         self.__password = password
         return self.__password
-    
+    #Fetches the password hint for the Player
+    def getpasswordhint(self):
+        return self._passwordhint
+
+    #Checks the password hint of the Player
+    def passwordhint(self):
 
 #create game class
 class Game:
