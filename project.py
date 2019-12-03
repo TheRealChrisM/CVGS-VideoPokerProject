@@ -12,7 +12,7 @@ window.title("Video Game Poker")
 loginFrame = Frame(window)
 forgotPasswordFrame = Frame(window)
 #Create general variables
-
+passwordhint = input("What do you want your password hint to be: ")
 #Creates a StringVar for username to be used when logging in.
 username = StringVar()
 #Creates a StringVar for password to be used when logging in.
@@ -21,7 +21,6 @@ password = StringVar()
 forgotPasswordInput = StringVar()
 #passwordhint = input("What do you want your password hint to be: ")
 userList = []
-
 #Create user class
 class Player:
     #Initializes variables within the Player class
@@ -55,6 +54,13 @@ class Player:
     def getpassword(self):
         self.__password = password
         return self.__password
+    #Fetches the password hint for the Player
+    def getpasswordhint(self):
+        return self._passwordhint
+   
+    def setpasswordhint(self):
+        self.__passwordhint = newpassword
+        return self.__passwordhint
     #Fetches the password hint question for the Player
     def getpasswordhintQuestion(self):
         return self.__passwordhintQuestion
@@ -88,6 +94,43 @@ class Game:
         #Moves to the function which allows a user to login.
         self.userLogin()
         return
+
+    #Creates a function that draws a random card between 0 and 51
+    def newcard():
+        newcard = random.randint(0,51)
+        return newcard
+
+    #Adds card to a player's hand
+    def addcard(self, newcard):
+        self.__cardDeck.append(newcard)
+
+    #Creates a function that returns True if the card has been selected
+    def draw(newcard):
+        return cardDeck[newcard]
+
+    #Resets Cards that have been drawn to help shuffle the deck 
+    def cardshuffle():
+        for i in range(52):
+            cardDeck[i] = False
+        
+    #Deals a certain amount of cards to the players
+    def deal(listofcards, numofcards):
+        i = numofcards
+        while i > 0 and False in carddeck:
+            drawcard = newcard()
+            if not(draw(drawcard)):
+                listofcards.addcard(Deck(drawcard))
+                carddeck[drawcard] = True
+                i -= 1
+                return
+
+    #Returns Face Down Card
+    def getcardbackground(self):
+        return self.__cardBackground
+
+    #Adds and Returns New Card 
+    def getcarddeck(self):
+        return self.__cardDeck
     
     #Processes a user login event.
     def userLogin(self):
