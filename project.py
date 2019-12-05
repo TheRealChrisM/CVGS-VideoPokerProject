@@ -227,8 +227,8 @@ class Game:
         passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText, wraplength = 250, justify = LEFT, pady = 5)
         passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
         passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPasswordHint)
-        passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = check
-        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPassword)
+        #passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = check
+        #passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPassword)
         passwordHintPromptLabel.grid(row = 0, column = 0)
         passwordHintEntry.grid(row = 1, column = 0)
         passwordHintButton.grid(row = 2, column = 0)
@@ -259,23 +259,24 @@ class Game:
     def beginGame(self):
         loginFrame.pack_forget()
         window.title("Video Game Poker")
+        window.geometry("500x500")
         playerNameLabel = Label(gameFrame, text = (self.getUser().getfirstname() + " " + self.getUser().getlastname()), anchor = "w")
         playerBalanceLabel = Label(gameFrame, text = ("Balance: " + str(self.getUser().getbalance())), anchor = "w")
         exitGameButton = Button(gameFrame, text = "EXIT", command = self.exitGame)
         playerNameLabel.grid(row = 0, column = 0)
         playerBalanceLabel.grid(row = 1, column = 0)
-        #cardOneButton = button(gameFrame, image =
-        #cardTwoButton = button(gameFrame, image =
-        #cardThreeButton = button(gameFrame, image =
-        #cardFourButton = button(gameFrame, image =
-        #cardFiveButton = button(gameFrame, image =
-        #cardDeckButton = button(gameFrame, image =
-        #cardDeckButton.grid(row = 2, column = 0)
-        #cardOneButton.grid(row = 2, column = 3)
-        #cardTwoButton.grid(row = 2, column = 3)
-        #cardThreeButton.grid(row = 2, column = 4)
-        #cardFourButton.grid(row = 2, column = 5)
-        #cardFiveButton.grid(row = 2, column = 6)
+        cardOneButton = Button(gameFrame, image = self.getcardbackground())
+        cardTwoButton = Button(gameFrame, image = self.getcardbackground())
+        cardThreeButton = Button(gameFrame, image = self.getcardbackground())
+        cardFourButton = Button(gameFrame, image = self.getcardbackground())
+        cardFiveButton = Button(gameFrame, image = self.getcardbackground())
+        cardDeckButton = Button(gameFrame, image = self.getcardbackground())
+        cardDeckButton.grid(row = 2, column = 0)
+        cardOneButton.grid(row = 2, column = 3)
+        cardTwoButton.grid(row = 2, column = 3)
+        cardThreeButton.grid(row = 2, column = 4)
+        cardFourButton.grid(row = 2, column = 5)
+        cardFiveButton.grid(row = 2, column = 6)
         exitGameButton.grid(row = 0, column = 100)
         gameFrame.grid(row = 0, column = 0)
         return
@@ -305,7 +306,7 @@ class Game:
         score = 0
         if self.isRoyalFlush():
             score = 250
-        elif self.isStraightFlush() 
+        elif self.isStraightFlush(): 
             score = 50
         elif self.isFourOfAKind():
             score = 25
