@@ -7,20 +7,26 @@ from PIL import ImageTk
 
 #Create Tkinter window variables
 window = Tk()
-window.title("Video Game Poker")
 #Creates a frame to store all of the widgets related to logging in.
 loginFrame = Frame(window)
 forgotPasswordFrame = Frame(window)
+gameFrame = Frame(window)
+
 #Create general variables
-passwordhint = input("What do you want your password hint to be: ")
+
 #Creates a StringVar for username to be used when logging in.
 username = StringVar()
 #Creates a StringVar for password to be used when logging in.
 password = StringVar()
 #Creates a stringVar for the response to a forgotten password screen.
 forgotPasswordInput = StringVar()
+#Creates a variable to store the correct response to the forgotten password screen.
+forgotPasswordInputAnswer = ""
+#Creates a variable to temporarily store the correct password for the user.
+correctPassword = ""
 #passwordhint = input("What do you want your password hint to be: ")
 userList = []
+
 #Create user class
 class Player:
     #Initializes variables within the Player class
@@ -54,20 +60,21 @@ class Player:
     def getpassword(self):
         self.__password = password
         return self.__password
-    #Fetches the password hint for the Player
-    def getpasswordhint(self):
-        return self._passwordhint
-   
-    def setpasswordhint(self):
-        self.__passwordhint = newpassword
-        return self.__passwordhint
+
+    #Returns a boolean based on whether the input matches the user's password
+    def passwordCheck(self, input):
+        passMatch = False
+        if self.__password == input:
+            passMatch = True
+        return passMatch
+    
     #Fetches the password hint question for the Player
     def getpasswordhintQuestion(self):
         return self.__passwordhintQuestion
 
-    #Checks the password hint of the Player
+    #Returns the password hint of the Player
     def passwordhint(self):
-        return
+        return self.__passwordhint
 
 #create game class
 class Game:
@@ -94,43 +101,13 @@ class Game:
         #Moves to the function which allows a user to login.
         self.userLogin()
         return
+    
+    def setUser(self, curUser):
+        self.__currentUser = curUser
+        return
 
-    #Creates a function that draws a random card between 0 and 51
-    def newcard():
-        newcard = random.randint(0,51)
-        return newcard
-
-    #Adds card to a player's hand
-    def addcard(self, newcard):
-        self.__cardDeck.append(newcard)
-
-    #Creates a function that returns True if the card has been selected
-    def draw(newcard):
-        return cardDeck[newcard]
-
-    #Resets Cards that have been drawn to help shuffle the deck 
-    def cardshuffle():
-        for i in range(52):
-            cardDeck[i] = False
-        
-    #Deals a certain amount of cards to the players
-    def deal(listofcards, numofcards):
-        i = numofcards
-        while i > 0 and False in carddeck:
-            drawcard = newcard()
-            if not(draw(drawcard)):
-                listofcards.addcard(Deck(drawcard))
-                carddeck[drawcard] = True
-                i -= 1
-                return
-
-    #Returns Face Down Card
-    def getcardbackground(self):
-        return self.__cardBackground
-
-    #Adds and Returns New Card 
-    def getcarddeck(self):
-        return self.__cardDeck
+    def getUser(self):
+        return self.__currentUser
     
     #Processes a user login event.
     def userLogin(self):
@@ -170,11 +147,26 @@ class Game:
         return
 
     def processLogin(self):
-        print(username.get())
-        print(password.get())
+        userFound = False
+        savedUser = None
+        selectedUser = username.get()
+        for i in range(len(userList)):
+                if (userList[i].getusername() == selectedUser):
+                    userFound = True
+                    savedUser = userList[i]
+        if not userFound:
+            messagebox.showinfo("No user", "User not found.")
+        elif userFound:
+            if savedUser.passwordCheck(password.get()):
+                self.setUser(savedUser)
+                self.beginGame()
+            else:
+                messagebox.showinfo("Login Attempt", "Incorrect login credentials. Attempt will be logged.")
+                password.set("")
         return
 
     def forgotPassword(self):
+        global forgotPasswordInputAnswer, correctPassword
         loginFrame.pack_forget()
         selectedUser = username.get()
         savedUser = None
@@ -186,19 +178,67 @@ class Game:
         if not userFound:
             messagebox.showinfo("User Not Found", "User could not be found.")
             self.userLogin()
+        forgotPasswordInputAnswer = savedUser.passwordhint()
+        correctPassword = savedUser.passwordhint()
         passwordHintPromptText = savedUser.getpasswordhintQuestion()
         passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText, wraplength = 250, justify = LEFT, pady = 5)
         passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
-        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPassword)
+        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPasswordHint)
         passwordHintPromptLabel.grid(row = 0, column = 0)
         passwordHintEntry.grid(row = 1, column = 0)
         passwordHintButton.grid(row = 2, column = 0)
         forgotPasswordFrame.pack()
         return
-    
-    def checkPassword(self):   
+
+    def checkPasswordHint(self):
+        global forgotPasswordInputAnswer, correctPassword
+        print(forgotPasswordInputAnswer, correctPassword)
+        if (forgotPasswordInput.get() == forgotPasswordInputAnswer):
+            messagebox.showinfo("Password", ("Your password is:\n " + correctPassword))
+            correctPassword = ""
+            forgotPasswordInputAnswer = ""
+            passwordHintPromptText = ""
+            forgotPasswordInput.set("")
+            forgotPasswordFrame.pack_forget()
+            self.userLogin()
+        else:
+            messagebox.showinfo("Password Hint", "Your response was incorrect.\n\n Returning to login screen.")
+            correctPassword = ""
+            forgotPasswordInputAnswer = ""
+            passwordHintPromptText = ""
+            forgotPasswordInput.set("")
+            forgotPasswordFrame.pack_forget()
+            self.userLogin()
         return
-    
+
+    def beginGame(self):
+        loginFrame.pack_forget()
+        window.title("Video Game Poker")
+        playerNameLabel = Label(gameFrame, text = (self.getUser().getfirstname() + " " + self.getUser().getlastname()), anchor = "w")
+        playerBalanceLabel = Label(gameFrame, text = ("Balance: " + str(self.getUser().getbalance())), anchor = "w")
+        exitGameButton = Button(gameFrame, text = "EXIT", command = self.exitGame)
+        playerNameLabel.grid(row = 0, column = 0)
+        playerBalanceLabel.grid(row = 1, column = 0)
+        #cardOneButton = button(gameFrame, image =
+        #cardTwoButton = button(gameFrame, image =
+        #cardThreeButton = button(gameFrame, image =
+        #cardFourButton = button(gameFrame, image =
+        #cardFiveButton = button(gameFrame, image =
+        #cardDeckButton = button(gameFrame, image =
+        #cardDeckButton.grid(row = 2, column = 0)
+        #cardOneButton.grid(row = 2, column = 3)
+        #cardTwoButton.grid(row = 2, column = 3)
+        #cardThreeButton.grid(row = 2, column = 4)
+        #cardFourButton.grid(row = 2, column = 5)
+        #cardFiveButton.grid(row = 2, column = 6)
+        exitGameButton.grid(row = 0, column = 100)
+        gameFrame.grid(row = 0, column = 0)
+        return
+
+    def exitGame(self):
+        window.destroy()
+        return
+        
 #Add default users
 userList.append(Player("King", "Howard", "kh", "cvgs", "Is Computer Science a real Science?", "True"))
 userList.append(Player("Mickey", "Mouse", "mmouse", "Disney", "Where I work.", "Disney"))
