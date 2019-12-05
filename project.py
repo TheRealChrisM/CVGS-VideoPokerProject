@@ -68,6 +68,15 @@ class Player:
             passMatch = True
         return passMatch
     
+    #Fetches the password hint for the Player
+    def getpasswordhint(self):
+        return self._passwordhint
+   
+    #Creates new password hint based on user input 
+    def setpasswordhint(self):
+        self.__passwordhint = newpassword
+        return self.__passwordhint
+
     #Fetches the password hint question for the Player
     def getpasswordhintQuestion(self):
         return self.__passwordhintQuestion
@@ -108,6 +117,40 @@ class Game:
 
     def getUser(self):
         return self.__currentUser
+
+    #Creates a function that draws a random card and adds it to the deck 
+    def newcard():
+        newcardlist = []
+        newcardlist.append(ImageTk.PhotoImage(file="card/"+str((i+1))+".gif"))
+        newcardlist = random.randint(0,51)
+        return newcard
+
+    #Adds new card to a player's hand
+    def addcard(self, newcard):
+        self.__cardDeck.append(newcard)
+
+    #Creates a function that returns True if the card has been selected
+    def draw(newcard):
+        return cardDeck[newcard]
+        
+    #Deals a certain amount of cards to the players
+    def deal(listofcards, numofcards):
+        i = numofcards
+        while i > 0 and False in cardDeck:
+            drawcard = newcard()
+            if not(draw(drawcard)):
+                listofcards.addcard(Deck(drawcard))
+                cardDeck[drawcard] = True
+                i -= 1
+                return
+
+    #Returns Face Down Card
+    def getcardbackground(self):
+        return self.__cardBackground
+
+    #Adds and Returns New Card 
+    def getcarddeck(self):
+        return self.__cardDeck
     
     #Processes a user login event.
     def userLogin(self):
@@ -184,6 +227,8 @@ class Game:
         passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText, wraplength = 250, justify = LEFT, pady = 5)
         passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
         passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPasswordHint)
+        passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = check
+        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPassword)
         passwordHintPromptLabel.grid(row = 0, column = 0)
         passwordHintEntry.grid(row = 1, column = 0)
         passwordHintButton.grid(row = 2, column = 0)
@@ -238,7 +283,48 @@ class Game:
     def exitGame(self):
         window.destroy()
         return
-        
+    
+    def checkPassword(self):
+        return
+
+
+    def winningstable(self):
+        # Show winnings table
+        lbl = Label(Game, text="Winnings Table", relief=RAISED)
+        lbl.grid
+
+        #Shows Text for Winnings Table
+        wte = {250: "Royal Flush", 50: "Straight Flush",
+               25: "Four of a Kind", 9: "Full House", 6: "Flush",
+               4: "Straight", 3: "Three of a Kind", 2: "Two Pair",
+               1: "Jacks or Higher"}
+
+        return
+
+    def getScore(self):
+        score = 0
+        if self.isRoyalFlush():
+            score = 250
+        elif self.isStraightFlush() 
+            score = 50
+        elif self.isFourOfAKind():
+            score = 25
+        elif self.isFullHouse():
+            score = 9
+        elif self.isFlush():
+            score = 6
+        elif self.isStraight():
+            score = 4
+        elif self.isThreeOfAKind():
+            score = 3
+        elif self.isTwoPair():
+            score = 2
+        elif self.isTwoPair():
+            score = 1
+        else:
+            score = 0  
+        return score
+
 #Add default users
 userList.append(Player("King", "Howard", "kh", "cvgs", "Is Computer Science a real Science?", "True"))
 userList.append(Player("Mickey", "Mouse", "mmouse", "Disney", "Where I work.", "Disney"))
