@@ -17,6 +17,8 @@ passwordhint = input("What do you want your password hint to be: ")
 username = StringVar()
 #Creates a StringVar for password to be used when logging in.
 password = StringVar()
+#Creates a stringVar for the response to a forgotten password screen.
+forgotPasswordInput = StringVar()
 #passwordhint = input("What do you want your password hint to be: ")
 userList = []
 #Create user class
@@ -52,20 +54,20 @@ class Player:
     def getpassword(self):
         self.__password = password
         return self.__password
+
     #Fetches the password hint for the Player
     def getpasswordhint(self):
         return self._passwordhint
    
+    #Creates new password hint based on user input 
     def setpasswordhint(self):
         self.__passwordhint = newpassword
         return self.__passwordhint
+
     #Fetches the password hint question for the Player
     def getpasswordhintQuestion(self):
-        return self._passwordhintQuestion
+        return self.__passwordhintQuestion
 
-    #Checks the password hint of the Player
-    def passwordhint(self):
-        return
 
 #create game class
 class Game:
@@ -93,32 +95,29 @@ class Game:
         self.userLogin()
         return
 
-    #Creates a function that draws a random card between 0 and 51
+    #Creates a function that draws a random card and adds it to the deck 
     def newcard():
-        newcard = random.randint(0,51)
+        newcardlist = []
+        newcardlist.append(ImageTk.PhotoImage(file="card/"+str((i+1))+".gif"))
+        newcardlist = random.randint(0,51)
         return newcard
 
-    #Adds card to a player's hand
+    #Adds new card to a player's hand
     def addcard(self, newcard):
         self.__cardDeck.append(newcard)
 
     #Creates a function that returns True if the card has been selected
     def draw(newcard):
         return cardDeck[newcard]
-
-    #Resets Cards that have been drawn to help shuffle the deck 
-    def cardshuffle():
-        for i in range(52):
-            cardDeck[i] = False
         
     #Deals a certain amount of cards to the players
     def deal(listofcards, numofcards):
         i = numofcards
-        while i > 0 and False in carddeck:
+        while i > 0 and False in cardDeck:
             drawcard = newcard()
             if not(draw(drawcard)):
                 listofcards.addcard(Deck(drawcard))
-                carddeck[drawcard] = True
+                cardDeck[drawcard] = True
                 i -= 1
                 return
 
@@ -185,17 +184,65 @@ class Game:
             messagebox.showinfo("User Not Found", "User could not be found.")
             self.userLogin()
         passwordHintPromptText = savedUser.getpasswordhintQuestion()
-        forgotPasswordInput = StringVar()
-        passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText)
+        passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText, wraplength = 250, justify = LEFT, pady = 5)
         passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
         passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = check
+        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPassword)
+        passwordHintPromptLabel.grid(row = 0, column = 0)
+        passwordHintEntry.grid(row = 1, column = 0)
+        passwordHintButton.grid(row = 2, column = 0)
+        forgotPasswordFrame.pack()
         return
-                
+    
+    def checkPassword(self):
+
+
+    def winningstable(self):
+        # Show winnings table
+        lbl = Label(Game, text="Winnings Table", relief=RAISED)
+        lbl.grid
+
+        #Shows Text for Winnings Table
+        wte = {250: "Royal Flush", 50: "Straight Flush",
+               25: "Four of a Kind", 9: "Full House", 6: "Flush",
+               4: "Straight", 3: "Three of a Kind", 2: "Two Pair",
+               1: "Jacks or Higher"}
+
         return
+
+    def getScore(self):
+        score = 0
+        if self.isRoyalFlush():
+            score = 250
+        elif self.isStraightFlush() 
+            score = 50
+        elif self.isFourOfAKind():
+            score = 25
+        elif self.isFullHouse():
+            score = 9
+        elif self.isFlush():
+            score = 6
+        elif self.isStraight():
+            score = 4
+        elif self.isThreeOfAKind():
+            score = 3
+        elif self.isTwoPair():
+            score = 2
+        elif self.isTwoPair():
+            score = 1
+        else:
+            score = 0  
+
+        return score
+
+        
+
+                                    
+    
 #Add default users
 userList.append(Player("King", "Howard", "kh", "cvgs", "Is Computer Science a real Science?", "True"))
 userList.append(Player("Mickey", "Mouse", "mmouse", "Disney", "Where I work.", "Disney"))
-
+userList.append(Player("John", "Doe", "jd", "bruh", "This is a test to see how long you can make password hints before things start getting weird so that we don't loose points for super duper long password hints.", "bruh"))
 game = Game(userList)
 
 #Starts the program
