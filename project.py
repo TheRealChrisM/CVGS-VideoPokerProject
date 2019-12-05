@@ -227,7 +227,7 @@ class Game:
         passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText, wraplength = 250, justify = LEFT, pady = 5)
         passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
         passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPasswordHint)
-        passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = check
+        passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = check)
         passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPassword)
         passwordHintPromptLabel.grid(row = 0, column = 0)
         passwordHintEntry.grid(row = 1, column = 0)
@@ -301,11 +301,14 @@ class Game:
 
         return
 
+    def isRoyalFlush(self):
+        
+
     def getScore(self):
         score = 0
         if self.isRoyalFlush():
             score = 250
-        elif self.isStraightFlush() 
+        elif self.isStraightFlush(): 
             score = 50
         elif self.isFourOfAKind():
             score = 25
