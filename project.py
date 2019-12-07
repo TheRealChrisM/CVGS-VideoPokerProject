@@ -301,7 +301,64 @@ class Game:
 
         return
 
-    def isRoyalFlush(self):
+    def readablehand(self, card):
+        #Creates card ranks
+        card_rank = [0: "2", 1: "3", 2: "4", 3: "5", 4: "6", 5: "7", 6: "8",
+                     7: "9", 8: "10", 9: "J", 10: "Q", 11: "King", 12: "A"]
+        #Creates card suits
+        card_suit = [0: "Hearts", 1: "Diamonds", 2: "Clubs", 3: "Spades"]
+        #Creates an empty return string
+        return_string = ""
+        #Creates a for loop that returns the card rank and card suit
+        for i in cards:
+            return_string += card_rank[i[0]] + card_suit[i[1]]
+        return return_string
+
+    def handcopy(self, card):
+        #Creates an empty results list
+        results = []
+        #Creates a for loop that returns the hand of the player
+        for i in cards:
+            results.append(i)
+        return results
+
+    def numerichand(self, cards):
+        # Converts alphanumeric hand to numeric values for easier comparisons
+        # Also sorts cards based on rank
+        card_rank = ["2": 0, "3": 1, "4": 2, "5": 3, "6": 4, "7": 5, "8": 6,
+                     "9": 7, "10": 8, "J": 9, "Q": 10, "K": 11, "A": 12,
+                     "10": 8, "j": 9, "q": 10, "k": 11, "a": 12]
+        card_suit = ["c": 0, "C": 0, "d": 1, "D": 1, "h": 2,
+                     "s": 3, "S": 3, "H": 2]
+        result = []
+        for i in range(len(cards)// 2 + len(cards) % 2):
+            result.append([card_rank[cards[i * 2]], card_suit[cards[i * 2 + 1]]])
+        result.sort()
+        result.reverse()
+        return result
+
+    def isFlush(self, hand):
+        # Returns True if hand is a Flush, otherwise returns False
+        hand_suit = [hand[0][1], hand[1][1], hand[2][1], hand[3][1], hand[4][1]]
+        for i in range(4):
+            if hand_suit.count(i) == 5:
+                return True
+        return False
+
+    def isStraight(self, hand):
+        # Return True if hand is a Straight, otherwise returns False
+        if hand[0][0] == (hand[1][0] + 1) == (hand[2][0] + 2) == (hand[3][0] + 3) == (hand[4][0] + 4):
+            return True
+        elif (hand[0][0] == 12) and (hand[1][0] == 3) and (hand[2][0] == 2) and (hand[3][0] == 1) and (hand[4][0] == 0):
+            return True
+        return False
+
+    def isStraightFlush(self, hand):
+        # Return True if hand is a Straight Flush, otherwise returns False
+        if check_flush(hand) and check_straight(hand):
+            return True
+        return False
+        
         
 
     def getScore(self):
