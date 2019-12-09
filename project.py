@@ -282,6 +282,7 @@ class Game:
             forgotPasswordFrame.pack_forget()
             self.userLogin()
         else:
+            #Creates a message box if the ser gives an incorrect response to the password hint 
             messagebox.showinfo("Password Hint", "Your response was incorrect.\n\n Returning to login screen.")
             correctPassword = ""
             forgotPasswordInputAnswer = ""
@@ -293,9 +294,11 @@ class Game:
 
     def beginGame(self):
         loginFrame.pack_forget()
+        #Creates the title of the window as "Video Game Poker"
         window.title("Video Game Poker")
         playerNameLabel = Label(gameFrame, text = (self.getUser().getfirstname() + " " + self.getUser().getlastname()), anchor = "w")
         playerBalanceLabel = Label(gameFrame, text = ("Balance: " + str(self.getUser().getbalance())), anchor = "w")
+        #Creates a button that exits the game
         exitGameButton = Button(gameFrame, text = "EXIT", command = self.exitGame)
         playerNameLabel.grid(row = 0, column = 0)
         playerBalanceLabel.grid(row = 1, column = 0)
@@ -316,7 +319,7 @@ class Game:
         return
 
     def exitGame(self):
-        window.destroy()
+        window.destroy()  #Exits and destroys the window 
         return
     
     def checkPassword(self):
@@ -324,8 +327,8 @@ class Game:
 
 
     def winningstable(self):
-        # Show winnings table
-        lbl = Label(Game, text="Winnings Table", relief=RAISED)
+        #Creates a button that shows the winnings table
+        lbl = Label(gameFrame, text="Winnings Table", relief=RAISED)
         lbl.grid
 
         #Shows Text for Winnings Table
@@ -336,57 +339,57 @@ class Game:
 
         return
 
-    def point(self,hand):                         #point()function to calculate partial score
+    def point(self,hand): #point()function to calculate partial score
         sortedHand = sorted(hand,reverse=True)
-        c_sum = 0
-        ranklist = []
+        card_sum = 0 #Initializes the card sum
+        ranklist = [] #Creates an empty list that stores the card rank
         for card in sortedHand:
-          ranklist.append(card.rank)
-        c_sum = ranklist[0]*13**4+ranklist[1]*13**3+ranklist[2]*13**2+ranklist[3]*13+ranklist[4]
-        return c_sum
+          ranklist.append(card.rank) #Adds the card rank to the empty list that stores rank
+        card_sum = ranklist[0]*13**4+ranklist[1]*13**3+ranklist[2]*13**2+ranklist[3]*13+ranklist[4] #Creates value of the card sum
+        return card_sum #Returns the card sum
 
-    def isRoyalFlush(self, hand):               #returns the total_point and prints out 'Royal Flush' if true, if false, pass down to isStraightFlush(hand)
+    def isRoyalFlush(self, hand):                
         sortedHand=sorted(hand,reverse=True)
-        flag=True
+        flag=True #Creates a variable that stores a Boolean value
         h=10
-        Cursuit=sortedHand[0].suit
-        Currank=14
+        Currentsuit=sortedHand[0].suit 
+        Currentrank=14
         total_point=h*13**5+self.point(sortedHand)
         for card in sortedHand:
-          if card.suit!=Cursuit or card.rank!=Currank:
+          if card.suit!=Currentsuit or card.rank!=Currentrank:
             flag=False
             break
           else:
-            Currank-=1
+            Currentrank-=1
         if flag:
-            print('Royal Flush')
-            self.tlist.append(total_point)    
+            print('Royal Flush') #returns the total_point and prints out 'Royal Flush' if true
+            self.tlist.append(total_point) #Adds the total amount of points to the empty list   
         else:
-          self.isStraightFlush(sortedHand)
+          self.isStraightFlush(sortedHand) #if false, pass down to isStraightFlush(hand)
 
 
-    def isStraightFlush(self, hand):       #returns the total_point and prints out 'Straight Flush' if true, if false, pass down to isFour(hand)
+    def isStraightFlush(self, hand):        
         sortedHand=sorted(hand,reverse=True)
-        flag=True
+        flag=True #Creates a variable that stores a Boolean value
         h=9
-        Cursuit=sortedHand[0].suit
-        Currank=sortedHand[0].rank
+        Currentsuit=sortedHand[0].suit
+        Currentrank=sortedHand[0].rank
         total_point=h*13**5+self.point(sortedHand)
         for card in sortedHand:
-          if card.suit!=Cursuit or card.rank!=Currank:
+          if card.suit!=Currentsuit or card.rank!=Currentrank:
             flag=False
             break
           else:
-            Currank-=1
+            Currentrank-=1
         if flag:
-          print ('Straight Flush')
-          self.tlist.append(total_point)
+          print ('Straight Flush') #returns the total_point and prints out 'Straight Flush' if true
+          self.tlist.append(total_point) #Adds the total amount of points to the empty list 
         else:
-          self.isFour(sortedHand)
+          self.isFour(sortedHand) #if false, pass down to isFour(hand)
 
     def isFourOfAKind(self, hand):                  #returns the total_point and prints out 'Four of a Kind' if true, if false, pass down to isFull()
         sortedHand=sorted(hand,reverse=True)
-        flag=True
+        flag=True #Creates a variable that stores a Boolean value
         h=8
         Currank=sortedHand[1].rank               #since it has 4 identical ranks,the 2nd one in the sorted listmust be the identical rank
         count=0
@@ -397,14 +400,14 @@ class Game:
         if not count<4:
           flag=True
           print('Four of a Kind')
-          self.tlist.append(total_point)
+          self.tlist.append(total_point)#Adds the total amount of points to the empty list  
 
         else:
           self.isFull(sortedHand)
 
-    def isFullHouse(self, hand):                     #returns the total_point and prints out 'Full House' if true, if false, pass down to isFlush()
+    def isFullHouse(self, hand):                      
         sortedHand=sorted(hand,reverse=True)
-        flag=True
+        flag=True #Creates a variable that stores a Boolean value
         h=7
         total_point=h*13**5+self.point(sortedHand)
         mylist=[]  #create a list to store ranks
@@ -416,16 +419,16 @@ class Game:
         num_rank2= mylist.count(rank2)
         if (num_rank1==2 and num_rank2==3)or (num_rank1==3 and num_rank2==2):
           flag=True
-          print ('Full House')
-          self.tlist.append(total_point)
+          print ('Full House') #returns the total_point and prints out 'Full House' if true
+          self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
         else:
-          flag=False
-          self.isFlush(sortedHand)
+          flag=False #Creates a variable that creates a False Boolean value
+          self.isFlush(sortedHand) #if false, pass down to isFlush()
 
-    def isFlush(self, hand):                         #returns the total_point and prints out 'Flush' if true, if false, pass down to isStraight()
+    def isFlush(self, hand):                          
         sortedHand=sorted(hand,reverse=True)
-        flag=True
+        flag=True #Creates a variable that stores a Boolean value
         h=6
         total_point=h*13**5+self.point(sortedHand)
         Cursuit=sortedHand[0].suit
@@ -434,15 +437,15 @@ class Game:
             flag=False
             break
         if flag:
-          print ('Flush')
-          self.tlist.append(total_point)
+          print ('Flush') #returns the total_point and prints out 'Flush' if true
+          self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
         else:
-          self.isStraight(sortedHand)
+          self.isStraight(sortedHand) #if false, pass down to isStraight()
 
     def isStraight(self, hand):
         sortedHand=sorted(hand,reverse=True)
-        flag=True
+        flag=True #Creates a variable that stores a Boolean value
         h=5
         total_point=h*13**5+self.point(sortedHand)
         Currank=sortedHand[0].rank  #this should be the highest rank
@@ -454,14 +457,14 @@ class Game:
             Currank-=1
         if flag:
           print('Straight')
-          self.tlist.append(total_point)
+          self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
         else:
           self.isThree(sortedHand)
         
     def isThreeOfAKind(self, hand):
         sortedHand=sorted(hand,reverse=True)
-        flag=True
+        flag=True #Creates a variable that stores a Boolean value
         h=4
         total_point=h*13**5+self.point(sortedHand)
         Currank=sortedHand[2].rank #In a sorted rank, the middle one should have 3 counts if flag=True
@@ -471,7 +474,7 @@ class Game:
         if mylist.count(Currank)==3:
           flag=True
           print ("Three of a Kind")
-          self.tlist.append(total_point)
+          self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
         else:
           flag=False
@@ -479,68 +482,76 @@ class Game:
         
     def isTwoPair(self, hand): 
         sortedHand=sorted(hand,reverse=True)
-        flag=True
+        flag=True #Creates a variable that stores a Boolean value
         h=3
         total_point=h*13**5+self.point(sortedHand)
-        rank1=sortedHand[1].rank#in a five cards sorted group, if isTwo(), the 2nd and 4th card should have another identical rank
-        rank2=sortedHand[3].rank
-        mylist=[]
+        rank1=sortedHand[1].rank #Rank of the 2nd card
+        rank2=sortedHand[3].rank #Rank of the 4th card
+        mylist=[] #create an empty list to store ranks
         for card in sortedHand:
           mylist.append(card.rank)
-        if mylist.count(rank1)==2 and mylist.count(rank2)==2:
+        if mylist.count(rank1)==2 and mylist.count(rank2)==2: #in a five cards sorted group, if isTwo(), the 2nd and 4th card should have another identical rank
           flag=True
-          print ("Two Pair") #returns the total_point and prints out 'Two Pair' if true, if false, pass down to isOne()
-          self.tlist.append(total_point)
+          print ("Two Pair") #returns the total_point and prints out 'Two Pair' if true, 
+          self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
         else:
           flag=False
-          self.isOne(sortedHand)
+          self.isOne(sortedHand) #if false, pass down to isOne()
 
-    def isOne(self, hand):                            #returns the total_point and prints out 'One Pair' if true, if false, pass down to isHigh()
+    def isJacks(self, hand):                           
         sortedHand=sorted(hand,reverse=True)
         flag=True
         h=2
         total_point=h*13**5+self.point(sortedHand)
-        mylist=[]                                       #create an empty list to store ranks
-        mycount=[]                                      #create an empty list to store number of count of each rank
+        mylist=[] #create an empty list to store ranks
+        mycount=[] #create an empty list to store number of count of each rank
         for card in sortedHand:
-          mylist.append(card.rank)
+          mylist.append(card.rank) #Adds a sorted card to the empty list
         for each in mylist:
           count=mylist.count(each)
           mycount.append(count)
         if mycount.count(2)==2 and mycount.count(1)==3:  #There should be only 2 identical numbers and the rest are all different
           flag=True
-          print ("One Pair")
-          self.tlist.append(total_point)
+          print ("One Pair")#returns the total_point and prints out 'One Pair' if true
+          self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
         else:
           flag=False
-          self.isHigh(sortedHand)
+          self.isHigh(sortedHand) #if false, pass down to isHigh()
 
 
     def getScore(self):
-        score = 0
-        if self.isRoyalFlush():
+        score = 0 #Initializes the scores
+        if self.isRoyalFlush(): #Returns a score of 250 if it is a Royal Flush
             score = 250
-        elif self.isStraightFlush(): 
+        elif self.isStraightFlush(): #Returns a score of 50 if it is a Straight Flush
             score = 50
-        elif self.isFourOfAKind():
+        elif self.isFourOfAKind(): #Returns a score of 25 if it is Four of a Kind
             score = 25
-        elif self.isFullHouse():
+        elif self.isFullHouse(): #Returns a score of 9 if it is a Full House
             score = 9
-        elif self.isFlush():
+        elif self.isFlush(): #Returns a score of 6 if it is a Flush
             score = 6
-        elif self.isStraight():
+        elif self.isStraight(): #Returns a score of 4 if it is a Straight
             score = 4
-        elif self.isThreeOfAKind():
+        elif self.isThreeOfAKind(): #Returns a score of 3 if it is Three of a Kind
             score = 3
-        elif self.isTwoPair():
+        elif self.isTwoPair(): #Returns a score of 2 if it is a Two Pair
             score = 2
-        elif self.isTwoPair():
+        elif self.isJacks(): #Returns a score of a 1 if it is a Jacks
             score = 1
         else:
-            score = 0  
+            score = 0 #Otherwise the score is 0 
         return score
+
+    def endgame(self):
+        #Creates a Button that shows what each team member contributed
+        teamButton = Button(gameFrame, text = "Click to show which team member did what", command = teammember)
+
+    def teammember(self):
+        #Prints what each team member contributed
+        print("William did the user class, card game logic such as Royal Flush, Straight Flush etc. while Chris did the user Login and password and gameplay")
 
 
 
