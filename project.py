@@ -289,8 +289,6 @@ class Game:
         loginFrame.pack()
         return
 
-<<<<<<< HEAD
-=======
     def registerUser(self):
         global recoveryQuestion, recoveryAnswer, firstName, lastName
         loginFrame.pack_forget()
