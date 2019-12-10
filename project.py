@@ -11,6 +11,7 @@ window = Tk()
 #Creates a frame to store all of the widgets related to logging in.
 loginFrame = Frame(window)
 forgotPasswordFrame = Frame(window)
+registerFrame = Frame(window)
 gameFrame = Frame(window)
 
 #Create general variables
@@ -158,6 +159,10 @@ class Game:
     def getUser(self):
         return self.__currentUser
 
+    def addUser(self, newUser):
+        self.__users.append(newUser)
+        return
+    
     def setUserHandImage(self, index, imageNum):
         self.__userHandImage[index] = ImageTk.PhotoImage(file="card/"+str(self.getcard(imageNum))+".gif")
         return
@@ -177,7 +182,7 @@ class Game:
     def addcard(self, cardIndex):
         self.__userHand[cardIndex] = self.newcard()
         return
-###########
+
     def play(self):
         for i in range(len(self.cardDeck) ):
           sortedHand = sorted (self.cardDeck[i], reverse = True)
@@ -185,14 +190,6 @@ class Game:
           for card in sortedHand:
             hand = hand + str(card) + ' '
           print ('Hand ' + str(i + 1) + ': ' + hand)
-
-    #Creates a function that draws a random card and adds it to the deck 
-    def newcard():
-        newcardlist = []
-        newcardlist.append(ImageTk.PhotoImage(file="card/"+str((i+1))+".gif"))
-        newcardlist = random.randint(0,51)
-        return newcard
-###########
 
     def getcard(self, cardIndex):
         return self.__userHand[cardIndex]
@@ -214,28 +211,19 @@ class Game:
         if not (cardTwoButton["state"] == "disabled"):
             self.addcard(1)
             self.setUserHandImage(1,1)                                             
-            cardOneButton["image"] = self.getUserHandImage(1)
+            cardTwoButton["image"] = self.getUserHandImage(1)
         if not (cardThreeButton["state"] == "disabled"):
             self.addcard(2)
             self.setUserHandImage(2,2)                                             
-            cardOneButton["image"] = self.getUserHandImage(2)
+            cardThreeButton["image"] = self.getUserHandImage(2)
         if not (cardFourButton["state"] == "disabled"):
             self.addcard(3)
             self.setUserHandImage(3,3)                                             
-            cardOneButton["image"] = self.getUserHandImage(3)
+            cardFourButton["image"] = self.getUserHandImage(3)
         if not (cardFiveButton["state"] == "disabled"):
             self.addcard(4)
             self.setUserHandImage(4,4)                                             
-            cardOneButton["image"] = self.getUserHandImage(4)
-        
-    
-        #while i > 0 and False in cardDeck:
-         #   drawcard = newcard()
-          #  if not(draw(drawcard)):
-           #     listofcards.addcard(Deck(drawcard))
-            #    cardDeck[drawcard] = True
-             #   i -= 1
-              #  return
+            cardFiveButton["image"] = self.getUserHandImage(4)
 
     #Returns Face Down Card
     def getcardbackground(self):
@@ -282,6 +270,16 @@ class Game:
         loginFrame.pack()
         return
 
+    def registerUser(self):
+        loginFrame.pack_forget()
+        recoveryQuestion = StringVar()
+        newUserLabel = Label(registerFrame, text = "Please enter a password recovery question.")
+        passwordRecoveryEntry = Entry(registerFrame, textvariable = recoveryQuestion)
+        passwordRecoveryAnswerLabel = Label(registerFrame, text = "What is the answer to this question?")
+        passwordRecoveryAnswerEntry = Entry(registerFrame, textvariable = recoveryAnswer)
+        #registerSubmitButton = Button(registerFrame, text = "SUBMIT", command = submit
+        return
+    
     def processLogin(self):
         userFound = False
         savedUser = None
@@ -291,7 +289,7 @@ class Game:
                     userFound = True
                     savedUser = userList[i]
         if not userFound:
-            messagebox.showinfo("No user", "User not found.")
+            self.registerUser()
         elif userFound:
             if savedUser.passwordCheck(password.get()):
                 self.setUser(savedUser)
@@ -300,7 +298,7 @@ class Game:
                 messagebox.showinfo("Login Attempt", "Incorrect login credentials. Attempt will be logged.")
                 password.set("")
         return
-
+    
     def forgotPassword(self):
         global forgotPasswordInputAnswer, correctPassword
         loginFrame.pack_forget()
