@@ -4,6 +4,7 @@
 
 from tkinter import *
 from PIL import ImageTk
+import random
 
 #Create Tkinter window variables
 window = Tk()
@@ -24,8 +25,15 @@ forgotPasswordInput = StringVar()
 forgotPasswordInputAnswer = ""
 #Creates a variable to temporarily store the correct password for the user.
 correctPassword = ""
-#passwordhint = input("What do you want your password hint to be: ")
+#Creates the userlist which will be used to store user accounts.
 userList = []
+#Creates placeholder cardButton variables so they can be used between functions.
+cardOneButton = None
+cardTwoButton = None
+cardThreeButton = None
+cardFourButton = None
+cardFiveButton = None
+cardDeckButton = None
 
 #Create user class
 class Player:
@@ -108,6 +116,8 @@ class Game:
         #Save the card background to be used.
         self.__cardBackground = ImageTk.PhotoImage(file="card/b2fv.gif")
         #Moves to the function which allows a user to login.
+        self.__userHand = [0,0,0,0,0]
+        self.__userHandImage = ["","","","",""]
         self.userLogin()
         return
     
@@ -115,34 +125,74 @@ class Game:
         self.__currentUser = curUser
         return
 
+    def getHand(self, index):
+        return self.__userHand[index]
+    
     def getUser(self):
         return self.__currentUser
 
-    #Creates a function that draws a random card and adds it to the deck 
-    def newcard():
-        newcardlist = []
-        newcardlist.append(ImageTk.PhotoImage(file="card/"+str((i+1))+".gif"))
-        newcardlist = random.randint(0,51)
-        return newcard
+    def setUserHandImage(self, index, imageNum):
+        self.__userHandImage[index] = ImageTk.PhotoImage(file="card/"+str(self.getcard(imageNum))+".gif")
+        return
 
-    #Adds new card to a player's hand
-    def addcard(self, newcard):
-        self.__cardDeck.append(newcard)
+    def getUserHandImage(self, index):
+        return self.__userHandImage[index]
+    
+    #Creates a function that draws a random card
+    def newcard(self):
+        randomCard = random.randint(0,51)
+        while (self.drawn(randomCard)):
+           randomCard = random.randint(0,51)
+        self.setDrawn(randomCard)
+        return (randomCard + 1)
+
+    #Adds new cards to a player's hand
+    def addcard(self, cardIndex):
+        self.__userHand[cardIndex] = self.newcard()
+        return
+
+    def getcard(self, cardIndex):
+        return self.__userHand[cardIndex]
 
     #Creates a function that returns True if the card has been selected
-    def draw(newcard):
-        return cardDeck[newcard]
-        
+    def drawn(self, newcard):
+        return self.__drawnCards[newcard]
+
+    def setDrawn(self, newcard):
+        self.__drawnCards[newcard] == True
+        return
+    
     #Deals a certain amount of cards to the players
-    def deal(listofcards, numofcards):
-        i = numofcards
-        while i > 0 and False in cardDeck:
-            drawcard = newcard()
-            if not(draw(drawcard)):
-                listofcards.addcard(Deck(drawcard))
-                cardDeck[drawcard] = True
-                i -= 1
-                return
+    def deal(self):
+        if not (cardOneButton["state"] == "disabled"):
+            self.addcard(0)
+            self.setUserHandImage(0,0)                                             
+            cardOneButton["image"] = self.getUserHandImage(0)
+        if not (cardTwoButton["state"] == "disabled"):
+            self.addcard(1)
+            self.setUserHandImage(1,1)                                             
+            cardOneButton["image"] = self.getUserHandImage(1)
+        if not (cardThreeButton["state"] == "disabled"):
+            self.addcard(2)
+            self.setUserHandImage(2,2)                                             
+            cardOneButton["image"] = self.getUserHandImage(2)
+        if not (cardFourButton["state"] == "disabled"):
+            self.addcard(3)
+            self.setUserHandImage(3,3)                                             
+            cardOneButton["image"] = self.getUserHandImage(3)
+        if not (cardFiveButton["state"] == "disabled"):
+            self.addcard(4)
+            self.setUserHandImage(4,4)                                             
+            cardOneButton["image"] = self.getUserHandImage(4)
+        
+    
+        #while i > 0 and False in cardDeck:
+         #   drawcard = newcard()
+          #  if not(draw(drawcard)):
+           #     listofcards.addcard(Deck(drawcard))
+            #    cardDeck[drawcard] = True
+             #   i -= 1
+              #  return
 
     #Returns Face Down Card
     def getcardbackground(self):
@@ -257,28 +307,59 @@ class Game:
         return
 
     def beginGame(self):
+        
+        global cardOneButton, cardTwoButton, cardThreeButton, cardFourButton, cardFiveButton, cardDeckButton
         loginFrame.pack_forget()
         window.title("Video Game Poker")
-        window.geometry("500x500")
+        window.geometry("700x300")
         playerNameLabel = Label(gameFrame, text = (self.getUser().getfirstname() + " " + self.getUser().getlastname()), anchor = "w")
         playerBalanceLabel = Label(gameFrame, text = ("Balance: " + str(self.getUser().getbalance())), anchor = "w")
         exitGameButton = Button(gameFrame, text = "EXIT", command = self.exitGame)
         playerNameLabel.grid(row = 0, column = 0)
         playerBalanceLabel.grid(row = 1, column = 0)
-        cardOneButton = Button(gameFrame, image = self.getcardbackground())
-        cardTwoButton = Button(gameFrame, image = self.getcardbackground())
-        cardThreeButton = Button(gameFrame, image = self.getcardbackground())
-        cardFourButton = Button(gameFrame, image = self.getcardbackground())
-        cardFiveButton = Button(gameFrame, image = self.getcardbackground())
-        cardDeckButton = Button(gameFrame, image = self.getcardbackground())
-        cardDeckButton.grid(row = 2, column = 0)
-        cardOneButton.grid(row = 2, column = 3)
-        cardTwoButton.grid(row = 2, column = 3)
-        cardThreeButton.grid(row = 2, column = 4)
-        cardFourButton.grid(row = 2, column = 5)
-        cardFiveButton.grid(row = 2, column = 6)
+        cardOneButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardOne)
+        cardTwoButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardTwo)
+        cardThreeButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardThree)
+        cardFourButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardFour)
+        cardFiveButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardFive)
+        cardDeckButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardDeck)
+        cardDeckButton.grid(row = 2, column = 0, padx = 50)
+        cardOneButton.grid(row = 2, column = 1, padx = 5)
+        cardTwoButton.grid(row = 2, column = 2, padx = 5)
+        cardThreeButton.grid(row = 2, column = 3, padx = 5)
+        cardFourButton.grid(row = 2, column = 4, padx = 5)
+        cardFiveButton.grid(row = 2, column = 5, padx = 5)
         exitGameButton.grid(row = 0, column = 100)
         gameFrame.grid(row = 0, column = 0)
+        return
+
+    def processCardOne(self):
+        if not (str(cardTwoButton["image"]) == str(self.getcardbackground())):
+            cardOneButton["state"] = "disabled"
+        return
+
+    def processCardTwo(self):
+        if not (str(cardTwoButton["image"]) == str(self.getcardbackground())):
+            cardTwoButton["state"] = "disabled"
+        return
+
+    def processCardThree(self):
+        if not (str(cardThreeButton["image"]) == str(self.getcardbackground())):
+            cardThreeButton["state"] = "disabled"
+        return
+
+    def processCardFour(self):
+        if not (str(cardFourButton["image"]) == str(self.getcardbackground())):
+            cardFourButton["state"] = "disabled"
+        return
+
+    def processCardFive(self):
+        if not (str(cardFiveButton["image"]) == str(self.getcardbackground())):
+            cardFiveButton["state"] = "disabled"
+        return
+
+    def processCardDeck(self):
+        self.deal()
         return
 
     def exitGame(self):
