@@ -43,6 +43,8 @@ cardFourButton = None
 cardFiveButton = None
 cardDeckButton = None
 currentBet = None
+increaseBetButton = None
+decreaseBetButton = None
 
 #Create user class
 class Player:
@@ -160,6 +162,19 @@ class Game:
         self.userLogin()
         #A variable representing the user's current bet.
         self.__curBet = 1
+        #Variable representings draws in a round
+        self.__drawNumber = 0
+        return
+
+    #Returns the value of draw number.
+    def getDraws(self):
+        #returns the current draw number
+        return self.__drawNumber
+
+    #Change the value of draw number
+    def setDraws(self, newVal):
+        #Sets the value based on the input
+        self.__drawNumber = newVal
         return
 
     #A functions which displays the current bet value.
@@ -249,46 +264,63 @@ class Game:
     
     #Deals a certain amount of cards to the players
     def deal(self):
-        #Checks to see if a user has marked a card to be held.
-        if not (cardOneButton["state"] == "disabled"):
-            #If they havent, draw a card and add it to their hand.
-            self.addcard(0)
-            #Find the correct card image and save it to the correct list.
-            self.setUserHandImage(0,0)
-            #Set the image to the card.
-            cardOneButton["image"] = self.getUserHandImage(0)
-        #Checks to see if a user has marked a card to be held.
-        if not (cardTwoButton["state"] == "disabled"):
-            #If they havent, draw a card and add it to their hand.
-            self.addcard(1)
-            #Find the correct card image and save it to the correct list.
-            self.setUserHandImage(1,1)
-            #Set the image to the card.
-            cardTwoButton["image"] = self.getUserHandImage(1)
-        #Checks to see if a user has marked a card to be held.
-        if not (cardThreeButton["state"] == "disabled"):
-            #If they havent, draw a card and add it to their hand.
-            self.addcard(2)
-            #Find the correct card image and save it to the correct list.
-            self.setUserHandImage(2,2)
-            #Set the image to the card.
-            cardThreeButton["image"] = self.getUserHandImage(2)
-        #Checks to see if a user has marked a card to be held.
-        if not (cardFourButton["state"] == "disabled"):
-            #If they havent, draw a card and add it to their hand.
-            self.addcard(3)
-            #Find the correct card image and save it to the correct list.
-            self.setUserHandImage(3,3)
-            #Set the image to the card.
-            cardFourButton["image"] = self.getUserHandImage(3)
-        #Checks to see if a user has marked a card to be held.    
-        if not (cardFiveButton["state"] == "disabled"):
-            #If they havent, draw a card and add it to their hand.
-            self.addcard(4)
-            #Find the correct card image and save it to the correct list.
-            self.setUserHandImage(4,4)
-            #Set the image to the card.
-            cardFiveButton["image"] = self.getUserHandImage(4)
+        global increaseBetButton, decreaseBetButton, cardOneButton, cardTwoButton, cardThreeButton, cardFourButton, cardFiveButton
+        if (self.getDraws() < 1):
+            #Checks to see if a user has marked a card to be held.
+            if not (cardOneButton["state"] == "disabled"):
+                #If they havent, draw a card and add it to their hand.
+                self.addcard(0)
+                #Find the correct card image and save it to the correct list.
+                self.setUserHandImage(0,0)
+                #Set the image to the card.
+                cardOneButton["image"] = self.getUserHandImage(0)
+            #Checks to see if a user has marked a card to be held.
+            if not (cardTwoButton["state"] == "disabled"):
+                #If they havent, draw a card and add it to their hand.
+                self.addcard(1)
+                #Find the correct card image and save it to the correct list.
+                self.setUserHandImage(1,1)
+                #Set the image to the card.
+                cardTwoButton["image"] = self.getUserHandImage(1)
+            #Checks to see if a user has marked a card to be held.
+            if not (cardThreeButton["state"] == "disabled"):
+                #If they havent, draw a card and add it to their hand.
+                self.addcard(2)
+                #Find the correct card image and save it to the correct list.
+                self.setUserHandImage(2,2)
+                #Set the image to the card.
+                cardThreeButton["image"] = self.getUserHandImage(2)
+            #Checks to see if a user has marked a card to be held.
+            if not (cardFourButton["state"] == "disabled"):
+                #If they havent, draw a card and add it to their hand.
+                self.addcard(3)
+                #Find the correct card image and save it to the correct list.
+                self.setUserHandImage(3,3)
+                #Set the image to the card.
+                cardFourButton["image"] = self.getUserHandImage(3)
+            #Checks to see if a user has marked a card to be held.    
+            if not (cardFiveButton["state"] == "disabled"):
+                #If they havent, draw a card and add it to their hand.
+                self.addcard(4)
+                #Find the correct card image and save it to the correct list.
+                self.setUserHandImage(4,4)
+                #Set the image to the card.
+                cardFiveButton["image"] = self.getUserHandImage(4)
+            self.setDraws(self.getDraws()+1)
+            increaseBetButton["state"] = "disabled"
+            decreaseBetButton["state"] = "disabled"
+        else:
+            self.calculateHand()
+            self.setDraws(0)
+            increaseBetButton["state"] = "active"
+            decreaseBetButton["state"] = "active"
+            cardOneButton["state"] = "active"
+            cardTwoButton["state"] = "active"
+            cardThreeButton["state"] = "active"
+            cardFourButton["state"] = "active"
+            cardFiveButton["state"] = "active"
+
+            print("test")
 
     #Returns Face Down Card.
     def getcardbackground(self):
@@ -509,7 +541,7 @@ class Game:
     #A function used to begin the game.
     def beginGame(self):
         #Global variables that are used because of limitations of tkinter.
-        global cardOneButton, cardTwoButton, cardThreeButton, cardFourButton, cardFiveButton, cardDeckButton, currentBet
+        global cardOneButton, cardTwoButton, cardThreeButton, cardFourButton, cardFiveButton, cardDeckButton, currentBet, increaseBetButton, decreaseBetButton
         #Removes the login frame.
         loginFrame.pack_forget()
         #Creates the title of the window as "Video Game Poker"
@@ -622,7 +654,14 @@ class Game:
                4: "Straight", 3: "Three of a Kind", 2: "Two Pair",
                1: "Jacks or Higher"}
         return
-
+    #Function which calculates the value of a player's hand 
+    def calculateHand(self):
+        score = self.getScore(self.__userHand)
+        self.getUser().addbalance(score)
+        messagebox.showinfo("Score", ("You got " +score+ " points!"))
+        self.nextRound()
+        return
+        
     def point(self,hand): #point()function to calculate partial score
         sortedHand = sorted(hand, reverse = True) #Sorts the cards in the empty hand list
         card_sum = 0 #Initializes the card sum
@@ -645,7 +684,7 @@ class Game:
             break
           else:
             Currentrank -= 1 #Else, subtract one from the current card rank
-        if flag:
+        if flag: #If true 
             print('Royal Flush') #returns the total_point and prints out 'Royal Flush' if true
             self.tlist.append(total_point) #Adds the total amount of points to the empty list   
         else:
@@ -804,34 +843,39 @@ class Game:
           flag = False #Return false
           return flag
 
-    def getScore(self):
+    def getScore(self, hand):
         score = 0 #Initializes the scores
-        if self.isRoyalFlush(): #Returns a score of 250 if it is a Royal Flush
+        if self.isRoyalFlush(hand): #Returns a score of 250 if it is a Royal Flush
             score = 250
-        elif self.isStraightFlush(): #Returns a score of 50 if it is a Straight Flush
+        elif self.isStraightFlush(hand): #Returns a score of 50 if it is a Straight Flush
             score = 50
-        elif self.isFourOfAKind(): #Returns a score of 25 if it is Four of a Kind
+        elif self.isFourOfAKind(hand): #Returns a score of 25 if it is Four of a Kind
             score = 25
-        elif self.isFullHouse(): #Returns a score of 9 if it is a Full House
+        elif self.isFullHouse(hand): #Returns a score of 9 if it is a Full House
             score = 9
-        elif self.isFlush(): #Returns a score of 6 if it is a Flush
+        elif self.isFlush(hand): #Returns a score of 6 if it is a Flush
             score = 6
-        elif self.isStraight(): #Returns a score of 4 if it is a Straight
+        elif self.isStraight(hand): #Returns a score of 4 if it is a Straight
             score = 4
-        elif self.isThreeOfAKind(): #Returns a score of 3 if it is Three of a Kind
+        elif self.isThreeOfAKind(hand): #Returns a score of 3 if it is Three of a Kind
             score = 3
-        elif self.isTwoPair(): #Returns a score of 2 if it is a Two Pair
+        elif self.isTwoPair(hand): #Returns a score of 2 if it is a Two Pair
             score = 2
-        elif self.isJacks(): #Returns a score of a 1 if it is a Jacks
+        elif self.isJacks(hand): #Returns a score of a 1 if it is a Jacks
             score = 1
         else:
             score = 0 #Otherwise the score is 0 
         return score
 
+    def nextround(self):
+        self.beginGame()
+        return
+        
     def endgame(self):
         #Creates a Button that shows what each team member contributed
         teamButton = Button(gameFrame, text = "Click to show which team member did what", command = teammember)
-        teamButton.grid(row) 
+        teamButton.grid(row)
+        return
 
     def teammember(self):
         #Prints what each team member contributed
