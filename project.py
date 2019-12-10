@@ -22,6 +22,14 @@ username = StringVar()
 password = StringVar()
 #Creates a stringVar for the response to a forgotten password screen.
 forgotPasswordInput = StringVar()
+#Stores the user's desired recovery question for registration
+recoveryQuestion = StringVar()
+#Stores the user's desired recovery answer for registration
+recoveryAnswer = StringVar()
+#Stores the user's first name for registration
+firstName = StringVar()
+#stores the user's last name for registration
+lastName = StringVar()
 #Creates a variable to store the correct response to the forgotten password screen.
 forgotPasswordInputAnswer = ""
 #Creates a variable to temporarily store the correct password for the user.
@@ -67,7 +75,6 @@ class Player:
 
    #Returns Password of the Player
     def getpassword(self):
-        self.__password = password
         return self.__password
 
     #Returns a boolean based on whether the input matches the user's password
@@ -271,13 +278,42 @@ class Game:
         return
 
     def registerUser(self):
+        global recoveryQuestion, recoveryAnswer, firstName, lastName
         loginFrame.pack_forget()
-        recoveryQuestion = StringVar()
+        firstNameLabel = Label(registerFrame, text = "First: ")
+        firstNameEntry = Entry(registerFrame, textvariable = firstName)
+        lastNameLabel = Label(registerFrame, text = "Last: ")
+        lastNameEntry = Entry(registerFrame, textvariable = lastName)
         newUserLabel = Label(registerFrame, text = "Please enter a password recovery question.")
         passwordRecoveryEntry = Entry(registerFrame, textvariable = recoveryQuestion)
         passwordRecoveryAnswerLabel = Label(registerFrame, text = "What is the answer to this question?")
         passwordRecoveryAnswerEntry = Entry(registerFrame, textvariable = recoveryAnswer)
-        #registerSubmitButton = Button(registerFrame, text = "SUBMIT", command = submit
+        registerSubmitButton = Button(registerFrame, text = "SUBMIT", command = self.submitRegistration)
+        firstNameLabel.grid(row = 0, column = 0)
+        firstNameEntry.grid(row = 0, column = 1)
+        lastNameLabel.grid(row = 1, column = 0)
+        lastNameEntry.grid(row = 1, column = 1)
+        newUserLabel.grid(row = 2, columnspan = 2)
+        passwordRecoveryEntry.grid(row = 3, columnspan = 2)
+        passwordRecoveryAnswerLabel.grid(row = 4, columnspan = 2)
+        passwordRecoveryAnswerEntry.grid(row = 5, columnspan = 2)
+        registerSubmitButton.grid(row = 6, columnspan = 2)
+        registerFrame.pack()
+        return
+
+    def submitRegistration(self):
+        newFirstName = firstName.get()
+        newLastName = lastName.get()
+        newUsername = username.get()
+        newPassword = password.get()
+        newRecoveryQuestion = recoveryQuestion.get()
+        newRecoveryAnswer = recoveryAnswer.get()
+        newUser = Player(newFirstName, newLastName, newUsername, newPassword, newRecoveryQuestion, newRecoveryAnswer)
+        print(newFirstName, newLastName, newUsername, newPassword, newRecoveryQuestion, newRecoveryAnswer)
+        self.addUser(newUser)
+        messagebox.showinfo("New User", (firstName.get() + ", you have successfully registered! \n Please log in!"))
+        registerFrame.pack_forget()
+        self.userLogin()
         return
     
     def processLogin(self):
@@ -297,6 +333,9 @@ class Game:
             else:
                 messagebox.showinfo("Login Attempt", "Incorrect login credentials. Attempt will be logged.")
                 password.set("")
+        print(self.__users)
+        print(selectedUser)
+        print(savedUser.getpassword().get())
         return
     
     def forgotPassword(self):
@@ -313,13 +352,11 @@ class Game:
             messagebox.showinfo("User Not Found", "User could not be found.")
             self.userLogin()
         forgotPasswordInputAnswer = savedUser.passwordhint()
-        correctPassword = savedUser.passwordhint()
+        correctPassword = savedUser.getpassword()
         passwordHintPromptText = savedUser.getpasswordhintQuestion()
         passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText, wraplength = 250, justify = LEFT, pady = 5)
         passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
         passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPasswordHint)
-        passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = check)
-        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPassword)
         passwordHintPromptLabel.grid(row = 0, column = 0)
         passwordHintEntry.grid(row = 1, column = 0)
         passwordHintButton.grid(row = 2, column = 0)
@@ -375,19 +412,6 @@ class Game:
         cardThreeButton.grid(row = 2, column = 3, padx = 5)
         cardFourButton.grid(row = 2, column = 4, padx = 5)
         cardFiveButton.grid(row = 2, column = 5, padx = 5)
-
-        #cardOneButton = button(gameFrame, image =
-        #cardTwoButton = button(gameFrame, image =
-        #cardThreeButton = button(gameFrame, image =
-        #cardFourButton = button(gameFrame, image =
-        #cardFiveButton = button(gameFrame, image =
-        #cardDeckButton = button(gameFrame, image =
-        #cardDeckButton.grid(row = 2, column = 0)
-        #cardOneButton.grid(row = 2, column = 3)
-        #cardTwoButton.grid(row = 2, column = 3)
-        #cardThreeButton.grid(row = 2, column = 4)
-        #cardFourButton.grid(row = 2, column = 5)
-        #cardFiveButton.grid(row = 2, column = 6)
         exitGameButton.grid(row = 0, column = 100)
         gameFrame.grid(row = 0, column = 0)
         return
@@ -424,10 +448,6 @@ class Game:
     def exitGame(self):
         window.destroy()  #Exits and destroys the window 
         return
-    
-    def checkPassword(self):
-        return
-
 
     def winningstable(self):
         #Creates a button that shows the winnings table
