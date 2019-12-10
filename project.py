@@ -521,7 +521,7 @@ class Game:
             break
           else:
             Currentrank -= 1 #Else, subtract one from the current card rank
-        if flag:
+        if flag: #If true 
             print('Royal Flush') #returns the total_point and prints out 'Royal Flush' if true
             self.tlist.append(total_point) #Adds the total amount of points to the empty list   
         else:
@@ -704,9 +704,8 @@ class Game:
             score = 0 #Otherwise the score is 0 
         return score
 
-    def betButton(self): #Creates a function for creating a betting button
-        betButton = Button(gameFrame, text = "PLACE YOUR BET", command) #Creates a button that allows the user to place their bet
-        betButton.grid(row)
+    def nextround(self):
+        
 
 
     def endgame(self):
