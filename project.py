@@ -43,6 +43,7 @@ cardThreeButton = None
 cardFourButton = None
 cardFiveButton = None
 cardDeckButton = None
+currentBet = None
 
 #Create user class
 class Player:
@@ -105,7 +106,7 @@ class Player:
 class Card(): #Creates a class for the card deck
     ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] #Creates a list for the card ranks
     suits = ['S', 'D', 'H', 'C'] #Creates a list for the card suits
-    return
+    
 
     def __init__ (self, rank, suit):
         self.rank = rank #Creates an initialized variable for the card ranks
@@ -158,8 +159,34 @@ class Game:
         self.__userHandImage = ["","","","",""]
         #Moves to the function which allows a user to login.
         self.userLogin()
+        #A variable representing the user's current bet.
+        self.__curBet = 1
         return
 
+    #A functions which displays the current bet value.
+    def currentBet(self):
+        return self.__curBet
+    
+    #A fucntion which increases the user's bet by 1 if their balance allows.
+    def increaseBet(self):
+        #Ensures that the player can actually make the bet change.
+        if (self.getUser().getbalance() >= (self.currentBet()+1)) and (5 >= (self.currentBet()+1)):
+            #Makes the bet change.
+            self.__curBet = self.__curBet+1
+            #Changes the current bet label.
+            currentBet["text"] = self.__curBet
+        return
+    
+     #A fucntion which increases the user's bet by 1 if it is greater than zero.
+    def decreaseBet(self):
+        #Ensures that the player can actually make the bet change.
+        if (0 < (self.currentBet()-1)):
+            #Makes the bet change.
+            self.__curBet = self.__curBet-1
+            #Changes the currentBet Label
+            currentBet["text"] = self.__curBet
+        return
+        
     #A function which sets the user that is currently playing and saves it for later use.
     def setUser(self, curUser):
         self.__currentUser = curUser #Creates a variable for the current user
@@ -491,7 +518,7 @@ class Game:
     #A function used to begin the game.
     def beginGame(self):
         #Global variables that are used because of limitations of tkinter.
-        global cardOneButton, cardTwoButton, cardThreeButton, cardFourButton, cardFiveButton, cardDeckButton
+        global cardOneButton, cardTwoButton, cardThreeButton, cardFourButton, cardFiveButton, cardDeckButton, currentBet
         #Removes the login frame.
         loginFrame.pack_forget()
         #Creates the title of the window as "Video Game Poker"
@@ -508,18 +535,23 @@ class Game:
         playerNameLabel.grid(row = 0, column = 0)
         #Grids the Player balance label
         playerBalanceLabel.grid(row = 1, column = 0)
-
         cardOneButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardOne) #Creates a Button for Card 1
         cardTwoButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardTwo) #Creates a Button for Card 2
         cardThreeButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardThree) #Creates a Button for Card 3
         cardFourButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardFour) #Creates a Button for Card 4
         cardFiveButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardFive) #Creates a Button for Card 5
         cardDeckButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardDeck) #Creates a Button for Card Deck
+        increaseBetButton = Button(gameFrame, text = "UP", command = self.increaseBet) #Creates a button which increases the bet.
+        decreaseBetButton = Button(gameFrame, text = "DOWN", command = self.decreaseBet) #Creates a button which decreases the bet.
+        currentBet = Label(gameFrame, text = "1") #Creates a label which displays the current bet.
         cardDeckButton.grid(row = 2, column = 0, padx = 50) #Grids the card deck to the gameFrame.
         cardOneButton.grid(row = 2, column = 1, padx = 5) #Grids the first card to the gameFrame.
         cardTwoButton.grid(row = 2, column = 2, padx = 5) #Grids the second card to the gameFrame.
+        increaseBetButton.grid(row = 3, column = 2) #Grids the increase bet button.
         cardThreeButton.grid(row = 2, column = 3, padx = 5) #Grids the third card to the gameFrame.
+        currentBet.grid(row = 3, column = 3) #Grids the current bet label.
         cardFourButton.grid(row = 2, column = 4, padx = 5) #Grids the fourth card to the gameFrame.
+        decreaseBetButton.grid(row = 3, column = 4) #Grids the decrease bet button.
         cardFiveButton.grid(row = 2, column = 5, padx = 5) #Grids the fifth card to the gameFrame.
         exitGameButton.grid(row = 0, column = 100) #Grids the exit game button to the gameFrame.
         gameFrame.grid(row = 0, column = 0) #Grids the entire gameframe.
@@ -797,9 +829,9 @@ class Game:
         dealButtton.grid(row = 3, column = 0) #Grids the card deal button 
 
 
-    def machineButton(self):
-        machineButton = Button(gameFrame, text = "Wager your bet", command = 
-        machineButton.grid(row)
+    #def machineButton(self):
+     #   machineButton = Button(gameFrame, text = "Wager your bet", command = 
+      #  machineButton.grid(row)
 
     def endgame(self):
         #Creates a Button that shows what each team member contributed
