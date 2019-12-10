@@ -11,7 +11,6 @@ window = Tk()
 #Creates a frame to store all of the widgets related to logging in.
 loginFrame = Frame(window)
 forgotPasswordFrame = Frame(window)
-registerFrame = Frame(window)
 gameFrame = Frame(window)
 
 #Create general variables
@@ -232,15 +231,6 @@ class Game:
         self.__userHand[cardIndex] = self.newcard()
         return
 
-    #def play(self):
-    #    for i in range(len(self.cardDeck) ):
-    #      sortedHand = sorted (self.cardDeck[i], reverse = True)
-    #      hand = ''
-    #      for card in sortedHand:
-    #        hand = hand + str(card) + ' '
-    #      print ('Hand ' + str(i + 1) + ': ' + hand)
-    #      return
-
     #Returns a specfic card from the user's hand.
     def getcard(self, cardIndex):
         #Returns the card number from the input index.
@@ -291,7 +281,7 @@ class Game:
             self.setUserHandImage(3,3)
             #Set the image to the card.
             cardFourButton["image"] = self.getUserHandImage(3)
-        #Checks to see if a user has marked a card to be held.
+        #Checks to see if a user has marked a card to be held.    
         if not (cardFiveButton["state"] == "disabled"):
             #If they havent, draw a card and add it to their hand.
             self.addcard(4)
@@ -425,6 +415,7 @@ class Game:
             #Registers the new user.
             self.registerUser()
         #If the user is found.
+            messagebox.showinfo("No user", "User not found.")
         elif userFound:
             #Checks the input and saved passwords.
             if savedUser.passwordCheck(password.get()):
@@ -555,6 +546,20 @@ class Game:
         cardFiveButton.grid(row = 2, column = 5, padx = 5) #Grids the fifth card to the gameFrame.
         exitGameButton.grid(row = 0, column = 100) #Grids the exit game button to the gameFrame.
         gameFrame.grid(row = 0, column = 0) #Grids the entire gameframe.
+        cardDeckButton.grid(row = 2, column = 0, padx = 50) #Grids the Card Deck Button
+        cardOneButton.grid(row = 2, column = 1, padx = 5) #Grids the Card One Button
+        cardTwoButton.grid(row = 2, column = 2, padx = 5) #Grids the Card Two Button
+        cardThreeButton.grid(row = 2, column = 3, padx = 5) #Grids the Card Three Button
+        cardFourButton.grid(row = 2, column = 4, padx = 5) #Grids the Card Four Button
+        cardFiveButton.grid(row = 2, column = 5, padx = 5) #Grids the Card Five Button
+        cardDeckButton.grid(row = 2, column = 0, padx = 50)
+        cardOneButton.grid(row = 2, column = 1, padx = 5)
+        cardTwoButton.grid(row = 2, column = 2, padx = 5)
+        cardThreeButton.grid(row = 2, column = 3, padx = 5)
+        cardFourButton.grid(row = 2, column = 4, padx = 5)
+        cardFiveButton.grid(row = 2, column = 5, padx = 5)
+        exitGameButton.grid(row = 0, column = 100)
+        gameFrame.grid(row = 0, column = 0)
         return
 
     #This is run when the user clicks the first card.
@@ -619,27 +624,27 @@ class Game:
         return
 
     def point(self,hand): #point()function to calculate partial score
-        sortedHand = sorted(hand,reverse=True)
+        sortedHand = sorted(hand, reverse = True) #Sorts the cards in the empty hand list
         card_sum = 0 #Initializes the card sum
         ranklist = [] #Creates an empty list that stores the card rank
-        for card in sortedHand:
+        for card in sortedHand: #For each card in the sorted list 
           ranklist.append(card.rank) #Adds the card rank to the empty list that stores rank
         card_sum = ranklist[0]*13**4+ranklist[1]*13**3+ranklist[2]*13**2+ranklist[3]*13+ranklist[4] #Creates value of the card sum
         return card_sum #Returns the card sum
 
-    def isRoyalFlush(self, hand):                
-        sortedHand=sorted(hand,reverse=True)
-        flag=True #Creates a variable that stores a Boolean value
-        h=10
-        Currentsuit=sortedHand[0].suit 
-        Currentrank=14
-        total_point=h*13**5+self.point(sortedHand)
-        for card in sortedHand:
-          if card.suit!=Currentsuit or card.rank!=Currentrank:
-            flag=False
+    def isRoyalFlush(self, hand): #Creates a function if the user has a Royal Flush          
+        sortedHand = sorted(hand,reverse = True) #Sorts the cards in the empty hand list
+        flag = True #Creates a variable that stores a Boolean value
+        h = 10 #Stores an integer value
+        Currentsuit = sortedHand[0].suit #Returns the current suit of the card
+        Currentrank = 14 #Returns the current rank of the card
+        total_point = h*13**5+self.point(sortedHand) #Returns the total points
+        for card in sortedHand: #For each card in the sorted list
+          if card.suit!= Currentsuit or card.rank!= Currentrank: #If the card suit or card rank is not equal to the current rank or suit, return False
+            flag = False #Return false
             break
           else:
-            Currentrank-=1
+            Currentrank -= 1 #Else, subtract one from the current card rank
         if flag:
             print('Royal Flush') #returns the total_point and prints out 'Royal Flush' if true
             self.tlist.append(total_point) #Adds the total amount of points to the empty list   
@@ -647,57 +652,57 @@ class Game:
           self.isStraightFlush(sortedHand) #if false, pass down to isStraightFlush(hand)
 
 
-    def isStraightFlush(self, hand):        
-        sortedHand=sorted(hand,reverse=True)
-        flag=True #Creates a variable that stores a Boolean value
-        h=9
-        Currentsuit=sortedHand[0].suit
-        Currentrank=sortedHand[0].rank
-        total_point=h*13**5+self.point(sortedHand)
-        for card in sortedHand:
-          if card.suit!=Currentsuit or card.rank!=Currentrank:
-            flag=False
+    def isStraightFlush(self, hand): #Creates a function if the user has a Straight Flush     
+        sortedHand = sorted(hand,reverse = True) #Sorts the cards in the empty hand list
+        flag = True #Creates a variable that stores a Boolean value
+        h = 9 #Stores an integer value
+        Currentsuit = sortedHand[0].suit #Returns the current suit of the card  
+        Currentrank = sortedHand[0].rank #Returns the current rank of the card
+        total_point = h*13**5+self.point(sortedHand)#Returns the total points
+        for card in sortedHand: #For each card in the sorted list 
+          if card.suit!=Currentsuit or card.rank!=Currentrank: #If the card suit or card rank is not equal to the current rank or suit, return False
+            flag=False #Return false
             break
           else:
-            Currentrank-=1
-        if flag:
-          print ('Straight Flush') #returns the total_point and prints out 'Straight Flush' if true
+            Currentrank -= 1 #Else, subtract one from the current card rank
+        if flag: #If true
+          print('Straight Flush') #returns the total_point and prints out 'Straight Flush' if true
           self.tlist.append(total_point) #Adds the total amount of points to the empty list 
         else:
-          self.isFour(sortedHand) #if false, pass down to isFour(hand)
+          self.isFourOfAKind(sortedHand) #if false, pass down to isFour(hand)
 
-    def isFourOfAKind(self, hand):                   
-        sortedHand=sorted(hand,reverse=True)
-        flag=True #Creates a variable that stores a Boolean value
-        h=8
-        Currentrank=sortedHand[1].rank  
-        count=0
-        total_point=h*13**5+self.point(sortedHand)
-        for card in sortedHand:
-          if card.rank==Currentrank:
-            count+=1
-        if not count<4:
-          flag=True
+    def isFourOfAKind(self, hand): #Creates a function if the user has four of a kind             
+        sortedHand = sorted(hand,reverse = True) #Sorts the cards in the empty hand list
+        flag = True #Creates a variable that stores a Boolean value
+        h = 8 #Stores an integer value
+        Currentrank=sortedHand[1].rank #Returns the current rank of the card
+        count = 0 #Initializes the count variable as 0
+        total_point = h*13**5+self.point(sortedHand) #Returns the total points
+        for card in sortedHand: #For each card in the sorted list
+          if card.rank == Currentrank: #If the card rank is equal to the current card rank
+            count += 1 #Add 1 to the count
+        if not count < 4: #If count is greater than 4
+          flag = True #Returns true if the count is less than 4
           print('Four of a Kind') #returns the total_point and prints out 'Four of a Kind' if true
           self.tlist.append(total_point)#Adds the total amount of points to the empty list  
 
         else:
-          self.isFull(sortedHand)#if false, pass down to isFull() 
+          self.isFullHouse(sortedHand)#if false, pass down to isFull() 
 
-    def isFullHouse(self, hand):                      
-        sortedHand=sorted(hand,reverse=True)
-        flag=True #Creates a variable that stores a Boolean value
-        h=7
-        total_point=h*13**5+self.point(sortedHand)
+    def isFullHouse(self, hand): #Creates a function if the user has a Full House                   
+        sortedHand = sorted(hand,reverse = True) #Sorts the cards in the empty hand list
+        flag = True #Creates a variable that stores a Boolean value
+        h = 7 #Stores an integer value
+        total_point = h*13**5+self.point(sortedHand) #Returns the total points
         mylist=[]#create a list to store ranks
-        for card in sortedHand:
-          mylist.append(card.rank)
+        for card in sortedHand: #For each card in the sorted list 
+          mylist.append(card.rank) #Adds the card rank to the empty mylist 
         rank1=sortedHand[0].rank #The 1st rank and the last rank should be different in a sorted list
-        rank2=sortedHand[-1].rank
-        numrank1= mylist.count(rank1)
-        numrank2= mylist.count(rank2)
-        if (numrank1==2 and numrank2==3)or (numrank1==3 and numrank2==2):
-          flag=True
+        rank2=sortedHand[-1].rank #2nd rank in the sorted list
+        numrank1= mylist.count(rank1) #Creates a variable to store the value of the 1st rank
+        numrank2= mylist.count(rank2) #Creates a variable to store the value of the 2nd rank 
+        if (numrank1==2 and numrank2==3)or (numrank1== 3 and numrank2== 2): #If the 1st rank is 2 and 2nd rank is 3, or 1st rank is 3 and 2nd rank is 2
+          flag=True #Returns true
           print('Full House') #returns the total_point and prints out 'Full House' if true
           self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
@@ -705,100 +710,99 @@ class Game:
           flag=False #Creates a variable that creates a False Boolean value
           self.isFlush(sortedHand) #if false, pass down to isFlush()
 
-    def isFlush(self, hand):                          
-        sortedHand=sorted(hand,reverse=True)
+    def isFlush(self, hand): #Creates a function if the user has a Flush                     
+        sortedHand=sorted(hand,reverse=True) #Sorts the cards in the empty hand list
         flag=True #Creates a variable that stores a Boolean value
-        h=6
-        total_point=h*13**5+self.point(sortedHand)
-        Currentsuit=sortedHand[0].suit
-        for card in sortedHand:
-          if not(card.suit==Currentsuit):
-            flag=False
+        h = 6 #Stores an integer value
+        total_point=h*13**5+self.point(sortedHand) #Returns the total points
+        Currentsuit=sortedHand[0].suit #Returns the current suit of the card
+        for card in sortedHand: #For each card in the sorted list 
+          if not(card.suit == Currentsuit): #If card suit is not equal to the current suit
+            flag=False #Return False
             break
-        if flag:
+        if flag: #Returns true
           print('Flush') #returns the total_point and prints out 'Flush' if true
           self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
         else:
           self.isStraight(sortedHand) #if false, pass down to isStraight()
 
-    def isStraight(self, hand):
-        sortedHand = sorted(hand, reverse=True)
+    def isStraight(self, hand): #Creates a function if the user has a straight
+        sortedHand = sorted(hand, reverse = True) #Sorts the cards in the empty hand list
         flag = True #Creates a variable that stores a Boolean value
-        h = 5
-        total_point = h*13**5+self.point(sortedHand)
+        h = 5 #Stores an integer value
+        total_point = h*13**5+self.point(sortedHand) #Returns the total points
         Currentrank = sortedHand[0].rank  #this should be the highest rank
-        for card in sortedHand:
-          if card.rank!= Currentrank:
-            flag = False
+        for card in sortedHand:#For each card in the sorted list  
+          if card.rank!= Currentrank: #If card rank is not equal to the current rank, return False
+            flag = False #Return false
             break
           else:
-            Currentrank-=1
-        if flag:
-          print('Straight')
+            Currentrank -= 1 #Else, subtract one from the current card rank
+        if flag: #Returns true
+          print('Straight') #Print Straight
           self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
         else:
-          self.isThree(sortedHand)
+          self.isThreeOfAKind(sortedHand)#if false, pass down to isThreeOfAKind(hand)
         
-    def isThreeOfAKind(self, hand):
-        sortedHand = sorted(hand,reverse=True)
+    def isThreeOfAKind(self, hand): #Creates a function if the user has three of a kind
+        sortedHand = sorted(hand,reverse=True) #Sorts the cards in the empty hand list
         flag = True #Creates a variable that stores a Boolean value
-        h = 4
-        total_point = h*13**5+self.point(sortedHand)
+        h = 4 #Stores an integer value
+        total_point = h*13**5+self.point(sortedHand) #Returns the total points
         Currentrank = sortedHand[2].rank #In a sorted rank, the middle one should have 3 counts if flag=True
-        mylist = []
-        for card in sortedHand:
-          mylist.append(card.rank)
-        if mylist.count(Currentrank)== 3:
-          flag = True
-          print ("Three of a Kind")
+        mylist = [] #create a list to store ranks
+        for card in sortedHand: #For each card in the sorted list 
+          mylist.append(card.rank) #Adds the card rank to the empty mylist
+        if mylist.count(Currentrank)== 3: #If the current rank in mylist is equal to 3
+          flag = True #Returns true
+          print ("Three of a Kind") #Print three of a kind
           self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
         else:
-          flag=False
-          self.isTwo(sortedHand)
+          flag=False #Return false
+          self.isTwoPair(sortedHand) #if false, pass down to isTwoPair(hand)
         
-    def isTwoPair(self, hand): 
-        sortedHand=sorted(hand,reverse=True)
-        flag=True #Creates a variable that stores a Boolean value
-        h=3
-        total_point=h*13**5+self.point(sortedHand)
+    def isTwoPair(self, hand): #Creates a function if the user has a TwoPair
+        sortedHand = sorted(hand,reverse=True) #Sorts the cards in the empty hand list 
+        flag = True #Creates a variable that stores a Boolean value
+        h=3 #Stores an integer value
+        total_point=h*13**5+self.point(sortedHand) #Returns the total points
         rank1=sortedHand[1].rank #Rank of the 2nd card
         rank2=sortedHand[3].rank #Rank of the 4th card
         mylist=[] #create an empty list to store ranks
-        for card in sortedHand:
-          mylist.append(card.rank)
-        if mylist.count(rank1)==2 and mylist.count(rank2)==2: #in a five cards sorted group, if isTwo(), the 2nd and 4th card should have another identical rank
-          flag=True
+        for card in sortedHand: #For each card in the sorted list 
+          mylist.append(card.rank) #Adds the card rank to the empty mylist
+        if mylist.count(rank1)== 2 and mylist.count(rank2)== 2: #in a five cards sorted group, if isTwo(), the 2nd and 4th card should have another identical rank
+          flag=True #Returns true
           print ("Two Pair") #returns the total_point and prints out 'Two Pair' if true, 
           self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
         else:
           flag=False
-          self.isOne(sortedHand) #if false, pass down to isOne()
+          self.isJacks(sortedHand) #if false, pass down to isJacks(hand)
 
-    def isJacks(self, hand):                           
-        sortedHand = sorted(hand,reverse=True)
-        flag = True
-        h = 2
-        totalpoint = h*13**5+self.point(sortedHand)
-        mylist=[] #create an empty list to store ranks
-        mycount=[] #create an empty list to store number of count of each rank
-        for card in sortedHand:
+    def isJacks(self, hand):#Creates a function if the user has Jacks                            
+        sortedHand = sorted(hand, reverse = True) #Sorts the cards in the empty hand list
+        flag = True #Creates a variable that stores a Boolean value
+        h = 2 #Stores an integer value
+        totalpoint = h*13**5+self.point(sortedHand) #Returns the total points
+        mylist = [] #create an empty list to store ranks
+        mycount = [] #create an empty list to store number of count of each rank
+        for card in sortedHand: #For each card in sorted hand
           mylist.append(card.rank) #Adds a sorted card to the empty list
-        for each in mylist:
-          count= mylist.count(each)
-          mycount.append(count)
-        if mycount.count(2)==2 and mycount.count(1)==3:  #There should be only 2 identical numbers and the rest are all different
-          flag = True
+        for each in mylist: #For each card in mylist
+          count = mylist.count(each) #Returns the count of each object in the list
+          mycount.append(count) #Adds the count of each object to the mycount list
+        if mycount.count(2)== 2 and mycount.count(1)== 3:  #There should be only 2 identical numbers and the rest are all different
+          flag = True #Returns true
           print("One Pair")#returns the total_point and prints out 'One Pair' if true
           self.tlist.append(total_point) #Adds the total amount of points to the empty list 
           
         else:
-          flag=False
-          self.isHigh(sortedHand) #if false, pass down to isHigh()
-
+          flag = False #Return false
+          return flag
 
     def getScore(self):
         score = 0 #Initializes the scores
@@ -823,15 +827,6 @@ class Game:
         else:
             score = 0 #Otherwise the score is 0 
         return score
-
-    def dealbutton(self): #Creates a function to deal the cards
-        dealButton = Button(gameFrame, text = "DEAL", command = self.processCardDeck) #Creates a button to deal the cards
-        dealButtton.grid(row = 3, column = 0) #Grids the card deal button 
-
-
-    #def machineButton(self):
-     #   machineButton = Button(gameFrame, text = "Wager your bet", command = 
-      #  machineButton.grid(row)
 
     def endgame(self):
         #Creates a Button that shows what each team member contributed
