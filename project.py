@@ -48,13 +48,13 @@ cardDeckButton = None
 class Player:
     #Initializes variables within the Player class
     def __init__(self, fn = "first", ln = "Last", user = "username", pw = "password", pq = "passwordhintQuestion", ph = "passwordhint", b = 100):
-        self.__firstname = fn
-        self.__lastname = ln
-        self.__username = user
-        self.__password = pw
-        self.__balance = b
-        self.__passwordhintQuestion = pq
-        self.__passwordhint = ph
+        self.__firstname = fn #Saves the first name input for the object.
+        self.__lastname = ln #Saves the last name input for the object.
+        self.__username = user #saves the username input for the object.
+        self.__password = pw #Saves the password input for the object.
+        self.__balance = b #Saves the balance input for the object.
+        self.__passwordhintQuestion = pq #Saves the password hint question for the object.
+        self.__passwordhint = ph #Saves the password hint answer for the object.
         return
 
     #Returns first name of the player
@@ -103,9 +103,9 @@ class Player:
 
 
 class Card(): #Creates a class for the card deck
-    
     ranks = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] #Creates a list for the card ranks
     suits = ['S', 'D', 'H', 'C'] #Creates a list for the card suits
+    return
 
     def __init__ (self, rank, suit):
         self.rank = rank #Creates an initialized variable for the card ranks
@@ -152,99 +152,135 @@ class Game:
             self.__cardDeck.append(ImageTk.PhotoImage(file="card/"+str((i+1))+".gif"))
         #Save the card background to be used.
         self.__cardBackground = ImageTk.PhotoImage(file="card/b2fv.gif")
-        #Moves to the function which allows a user to login.
+        #Creates a list which stores the card numbers in the user's hand.
         self.__userHand = [0,0,0,0,0]
+        #Creates a list which stores the image values in the user's hand
         self.__userHandImage = ["","","","",""]
+        #Moves to the function which allows a user to login.
         self.userLogin()
         return
-    
+
+    #A function which sets the user that is currently playing and saves it for later use.
     def setUser(self, curUser):
         self.__currentUser = curUser #Creates a variable for the current user
         return
 
+    #Returns a card number in the user's hand based on the index input.
     def getHand(self, index):
+        #Finds the card in the user's hand and then returns it.
         return self.__userHand[index]
-    
+
+    #This function returns the current user so that player functions can be run on it.
     def getUser(self):
         return self.__currentUser #Fetches the current user
 
+    #This function adds a user to the userlist, mainly used for registration.
     def addUser(self, newUser):
+        #Appends the new user object to the current "database" of users.
         self.__users.append(newUser)
         return
-    
+
+    #Changes the saved image variable for a user's card hand.
     def setUserHandImage(self, index, imageNum):
+        #Creates the new variable and saves it to the desired index.
         self.__userHandImage[index] = ImageTk.PhotoImage(file="card/"+str(self.getcard(imageNum))+".gif")
         return
 
+    #Returns a image variable for the user's hand.
     def getUserHandImage(self, index):
+        #Returns the image variable based on the desired index.
         return self.__userHandImage[index]
     
     #Creates a function that draws a random card
     def newcard(self):
         randomCard = random.randint(0,51) #Creates a random card from 0 to 51
-        while (self.drawn(randomCard)):
-           randomCard = random.randint(0,51)
-        self.setDrawn(randomCard)
-        return (randomCard + 1)
+        while (self.drawn(randomCard)): #Makes sure that the card has not already been drawn.
+           randomCard = random.randint(0,51) #If it has keep drawing random cards.
+        self.setDrawn(randomCard) #Once a new card has been drawn, set it to drawn so it is not drawn again.
+        return (randomCard + 1) #Return the card's number +1 to represent that the cards are picked from 0-51 and not 1-52.
 
     #Adds new cards to a player's hand
     def addcard(self, cardIndex):
+        #Draws a new card for the user's hand based on a desired index.
         self.__userHand[cardIndex] = self.newcard()
         return
 
-    def play(self):
-        for i in range(len(self.cardDeck) ):
-          sortedHand = sorted (self.cardDeck[i], reverse = True)
-          hand = ''
-          for card in sortedHand:
-            hand = hand + str(card) + ' '
-          print ('Hand ' + str(i + 1) + ': ' + hand)
+    #def play(self):
+    #    for i in range(len(self.cardDeck) ):
+    #      sortedHand = sorted (self.cardDeck[i], reverse = True)
+    #      hand = ''
+    #      for card in sortedHand:
+    #        hand = hand + str(card) + ' '
+    #      print ('Hand ' + str(i + 1) + ': ' + hand)
+    #      return
 
-    #Creates a function that draws a random card and adds it to the deck 
-    def newcard():
-        
-        return newcard
-    
+    #Returns a specfic card from the user's hand.
     def getcard(self, cardIndex):
+        #Returns the card number from the input index.
         return self.__userHand[cardIndex]
 
     #Creates a function that returns True if the card has been selected
     def drawn(self, newcard):
+        #Return the value of the list at the newcard index.
         return self.__drawnCards[newcard]
 
+    #Sets a card to drawn once it has been drawn
     def setDrawn(self, newcard):
+        #Sets the appropriate index to true once it has been drawn.
         self.__drawnCards[newcard] == True
         return
     
     #Deals a certain amount of cards to the players
     def deal(self):
+        #Checks to see if a user has marked a card to be held.
         if not (cardOneButton["state"] == "disabled"):
+            #If they havent, draw a card and add it to their hand.
             self.addcard(0)
-            self.setUserHandImage(0,0)                                             
+            #Find the correct card image and save it to the correct list.
+            self.setUserHandImage(0,0)
+            #Set the image to the card.
             cardOneButton["image"] = self.getUserHandImage(0)
+        #Checks to see if a user has marked a card to be held.
         if not (cardTwoButton["state"] == "disabled"):
+            #If they havent, draw a card and add it to their hand.
             self.addcard(1)
-            self.setUserHandImage(1,1)                                             
+            #Find the correct card image and save it to the correct list.
+            self.setUserHandImage(1,1)
+            #Set the image to the card.
             cardTwoButton["image"] = self.getUserHandImage(1)
+        #Checks to see if a user has marked a card to be held.
         if not (cardThreeButton["state"] == "disabled"):
+            #If they havent, draw a card and add it to their hand.
             self.addcard(2)
-            self.setUserHandImage(2,2)                                             
+            #Find the correct card image and save it to the correct list.
+            self.setUserHandImage(2,2)
+            #Set the image to the card.
             cardThreeButton["image"] = self.getUserHandImage(2)
+        #Checks to see if a user has marked a card to be held.
         if not (cardFourButton["state"] == "disabled"):
+            #If they havent, draw a card and add it to their hand.
             self.addcard(3)
-            self.setUserHandImage(3,3)                                             
+            #Find the correct card image and save it to the correct list.
+            self.setUserHandImage(3,3)
+            #Set the image to the card.
             cardFourButton["image"] = self.getUserHandImage(3)
+        #Checks to see if a user has marked a card to be held.
         if not (cardFiveButton["state"] == "disabled"):
+            #If they havent, draw a card and add it to their hand.
             self.addcard(4)
-            self.setUserHandImage(4,4)                                             
+            #Find the correct card image and save it to the correct list.
+            self.setUserHandImage(4,4)
+            #Set the image to the card.
             cardFiveButton["image"] = self.getUserHandImage(4)
 
-    #Returns Face Down Card
+    #Returns Face Down Card.
     def getcardbackground(self):
+        #Returns the variable for a card that is face down.
         return self.__cardBackground
 
-    #Adds and Returns New Card 
+    #Adds and Returns New Card.
     def getcarddeck(self):
+        #returns the card deck for undrawn cards.
         return self.__cardDeck
     
     #Processes a user login event.
@@ -284,117 +320,179 @@ class Game:
         loginFrame.pack()
         return
 
+    #A function which registers a new user.
     def registerUser(self):
+        #Global variables that are required because of restrictions in tkinter.
         global recoveryQuestion, recoveryAnswer, firstName, lastName
+        #Gets rid of the login frame.
         loginFrame.pack_forget()
+        #The label which prompts for the user's first name.
         firstNameLabel = Label(registerFrame, text = "First: ")
+        #An entry box to collect the user's first name.
         firstNameEntry = Entry(registerFrame, textvariable = firstName)
+        #A label to ask for the user's last name.
         lastNameLabel = Label(registerFrame, text = "Last: ")
+        #A entry box to collect the user's last name.
         lastNameEntry = Entry(registerFrame, textvariable = lastName)
+        #Displays the prompt asking for a recovery question.
         newUserLabel = Label(registerFrame, text = "Please enter a password recovery question.")
+        #An entry box that collects the user's desired recovery question.
         passwordRecoveryEntry = Entry(registerFrame, textvariable = recoveryQuestion)
+        #Asks the user for the desired answer to their recovery question.
         passwordRecoveryAnswerLabel = Label(registerFrame, text = "What is the answer to this question?")
+        #Gets the answer to the user's recovery question.
         passwordRecoveryAnswerEntry = Entry(registerFrame, textvariable = recoveryAnswer)
+        #Creates a submit button to create the new user.
         registerSubmitButton = Button(registerFrame, text = "SUBMIT", command = self.submitRegistration)
-        firstNameLabel.grid(row = 0, column = 0)
-        firstNameEntry.grid(row = 0, column = 1)
-        lastNameLabel.grid(row = 1, column = 0)
-        lastNameEntry.grid(row = 1, column = 1)
-        newUserLabel.grid(row = 2, columnspan = 2)
-        passwordRecoveryEntry.grid(row = 3, columnspan = 2)
-        passwordRecoveryAnswerLabel.grid(row = 4, columnspan = 2)
-        passwordRecoveryAnswerEntry.grid(row = 5, columnspan = 2)
-        registerSubmitButton.grid(row = 6, columnspan = 2)
+        firstNameLabel.grid(row = 0, column = 0) #Grids the first name question.
+        firstNameEntry.grid(row = 0, column = 1) #Grids the first name response.
+        lastNameLabel.grid(row = 1, column = 0) #Grids the last name question.
+        lastNameEntry.grid(row = 1, column = 1) #Grids the last name response.
+        newUserLabel.grid(row = 2, columnspan = 2) #Grids the recovery question prompt.
+        passwordRecoveryEntry.grid(row = 3, columnspan = 2) #Grids the recovery question response.
+        passwordRecoveryAnswerLabel.grid(row = 4, columnspan = 2) #Grids the recovery question prompt.
+        passwordRecoveryAnswerEntry.grid(row = 5, columnspan = 2) #Grids the recovery question response.
+        registerSubmitButton.grid(row = 6, columnspan = 2) #Grids the submit button.
+        #Displays the register frame.
         registerFrame.pack()
         return
 
+    #A function which processes a user registration.
     def submitRegistration(self):
-        newFirstName = firstName.get()
-        newLastName = lastName.get()
-        newUsername = username.get()
-        newPassword = password.get()
-        newRecoveryQuestion = recoveryQuestion.get()
-        newRecoveryAnswer = recoveryAnswer.get()
+        newFirstName = firstName.get() #Saves the first name
+        newLastName = lastName.get() #Saves the last name
+        newUsername = username.get() #Saves the username
+        newPassword = password.get() #Saves the password
+        newRecoveryQuestion = recoveryQuestion.get() #Saves the recovery question
+        newRecoveryAnswer = recoveryAnswer.get() #Saves the recovery answer
+        #Creates a new user with the input.
         newUser = Player(newFirstName, newLastName, newUsername, newPassword, newRecoveryQuestion, newRecoveryAnswer)
-        print(newFirstName, newLastName, newUsername, newPassword, newRecoveryQuestion, newRecoveryAnswer)
+        #Saves the new user.
         self.addUser(newUser)
+        #Tells the user they have successfully registered.
         messagebox.showinfo("New User", (firstName.get() + ", you have successfully registered! \n Please log in!"))
+        #Gets rid of the register frame.
         registerFrame.pack_forget()
+        #Moves back to the user login.
         self.userLogin()
         return
-    
+
+    #A function which processes a login.
     def processLogin(self):
+        #Placeholder variable for a boolean.
         userFound = False
+        #placeholder variable for player.
         savedUser = None
+        #Gets the user that should be found.
         selectedUser = username.get()
+        #Looks through the userlist.
         for i in range(len(userList)):
+                #Determines if a user is found.
                 if (userList[i].getusername() == selectedUser):
+                    #Indicates it is found.
                     userFound = True
+                    #Sets the found user to a placeholder variable.
                     savedUser = userList[i]
+        #Determines a user is not found.
         if not userFound:
+            #Registers the new user.
             self.registerUser()
+        #If the user is found.
         elif userFound:
+            #Checks the input and saved passwords.
             if savedUser.passwordCheck(password.get()):
+                #If the password is correct it sets the user as the active user.
                 self.setUser(savedUser)
+                #Begins the game.
                 self.beginGame()
+            #In case that does not happen.
             else:
+                #Game informs user that the password was incorrect.
                 messagebox.showinfo("Login Attempt", "Incorrect login credentials. Attempt will be logged.")
+                #Clears the password box.
                 password.set("")
-        print(self.__users)
-        print(selectedUser)
-        print(savedUser.getpassword().get())
-        return
-    
-    def forgotPassword(self):
-        global forgotPasswordInputAnswer, correctPassword
-        loginFrame.pack_forget()
-        selectedUser = username.get()
-        savedUser = None
-        userFound = False
-        for i in range(len(userList)):
-                if (userList[i].getusername() == selectedUser):
-                    userFound = True
-                    savedUser = userList[i]
-        if not userFound:
-            messagebox.showinfo("User Not Found", "User could not be found.")
-            self.userLogin()
-        forgotPasswordInputAnswer = savedUser.passwordhint()
-        correctPassword = savedUser.getpassword()
-        passwordHintPromptText = savedUser.getpasswordhintQuestion()
-        passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText, wraplength = 250, justify = LEFT, pady = 5)
-        passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
-        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPasswordHint)
-        passwordHintPromptLabel.grid(row = 0, column = 0)
-        passwordHintEntry.grid(row = 1, column = 0)
-        passwordHintButton.grid(row = 2, column = 0)
-        forgotPasswordFrame.pack()
         return
 
-    def checkPasswordHint(self):
+    #A function which allows a user to get their password.
+    def forgotPassword(self):
+        #Global variables because of limitations in tkinter.
         global forgotPasswordInputAnswer, correctPassword
-        print(forgotPasswordInputAnswer, correctPassword)
+        #Gets rid of the login frame.
+        loginFrame.pack_forget()
+        #Saves the user's current inputted username.
+        selectedUser = username.get()
+        #Creates a player placeholder.
+        savedUser = None
+        #Creates a boolean to represent whether a user has been found.
+        userFound = False
+        #Goes through the user list.
+        for i in range(len(userList)):
+                #If the username matches.
+                if (userList[i].getusername() == selectedUser):
+                    #Indicate a user was found.
+                    userFound = True
+                    #Save the found user.
+                    savedUser = userList[i]
+        #If the user was not found.
+        if not userFound:
+            #Display a message box informing them.
+            messagebox.showinfo("User Not Found", "User could not be found.")
+            #Take the user back to the login screen.
+            self.userLogin()
+        forgotPasswordInputAnswer = savedUser.passwordhint() #Retireve the user's password hint prompt answer.
+        correctPassword = savedUser.getpassword() #Retireve the user's correct password.
+        passwordHintPromptText = savedUser.getpasswordhintQuestion() #Retireve the user's password hint prompt.
+        passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText, wraplength = 250, justify = LEFT, pady = 5) #Creates a label for the password hint question.
+        passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput) #Creates an entry box for the user to input the correct answer.
+        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPasswordHint) #Creates a button to submit their response.
+        passwordHintPromptLabel.grid(row = 0, column = 0) #Displays the user's password prompt.
+        passwordHintEntry.grid(row = 1, column = 0) #Displays the entry box.
+        passwordHintButton.grid(row = 2, column = 0) #Displays the button.
+        forgotPasswordFrame.pack() #Packs in the frame so it can be seen.
+        return
+    
+    #A function that is used to check a submitted password hint response.
+    def checkPasswordHint(self):
+        #Global variables that are used because of limitations of tkinter.
+        global forgotPasswordInputAnswer, correctPassword
+        #Runs if the user correctly inputs the password recovery.
         if (forgotPasswordInput.get() == forgotPasswordInputAnswer):
+            #Tells the user what the password is.
             messagebox.showinfo("Password", ("Your password is:\n " + correctPassword))
+            #Resets the correctPassword variable
             correctPassword = ""
+            #Resets the password recovery input.
             forgotPasswordInputAnswer = ""
+            #Resets the password recovery question.
             passwordHintPromptText = ""
+            #Resets the password recovery input.
             forgotPasswordInput.set("")
+            #Removes the password recovery frame.
             forgotPasswordFrame.pack_forget()
+            #Pushes the user back to login.
             self.userLogin()
         else:
             #Creates a message box if the ser gives an incorrect response to the password hint 
             messagebox.showinfo("Password Hint", "Your response was incorrect.\n\n Returning to login screen.")
+            #Resets the correctPassword variable
             correctPassword = ""
+            #Resets the password recovery input.
             forgotPasswordInputAnswer = ""
+            #Resets the password recovery question.
             passwordHintPromptText = ""
+            #Resets the password recovery input.
             forgotPasswordInput.set("")
+            #Removes the password recovery frame.
             forgotPasswordFrame.pack_forget()
+            #Pushes the user back to login.
             self.userLogin()
         return
 
+    #A function used to begin the game.
     def beginGame(self):
-        
+        #Global variables that are used because of limitations of tkinter.
         global cardOneButton, cardTwoButton, cardThreeButton, cardFourButton, cardFiveButton, cardDeckButton
+        #Removes the login frame.
         loginFrame.pack_forget()
         #Creates the title of the window as "Video Game Poker"
         window.title("Video Game Poker")
@@ -417,42 +515,59 @@ class Game:
         cardFourButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardFour) #Creates a Button for Card 4
         cardFiveButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardFive) #Creates a Button for Card 5
         cardDeckButton = Button(gameFrame, image = self.getcardbackground(), command = self.processCardDeck) #Creates a Button for Card Deck
-        cardDeckButton.grid(row = 2, column = 0, padx = 50)
-        cardOneButton.grid(row = 2, column = 1, padx = 5)
-        cardTwoButton.grid(row = 2, column = 2, padx = 5)
-        cardThreeButton.grid(row = 2, column = 3, padx = 5)
-        cardFourButton.grid(row = 2, column = 4, padx = 5)
-        cardFiveButton.grid(row = 2, column = 5, padx = 5)
-        exitGameButton.grid(row = 0, column = 100)
-        gameFrame.grid(row = 0, column = 0)
+        cardDeckButton.grid(row = 2, column = 0, padx = 50) #Grids the card deck to the gameFrame.
+        cardOneButton.grid(row = 2, column = 1, padx = 5) #Grids the first card to the gameFrame.
+        cardTwoButton.grid(row = 2, column = 2, padx = 5) #Grids the second card to the gameFrame.
+        cardThreeButton.grid(row = 2, column = 3, padx = 5) #Grids the third card to the gameFrame.
+        cardFourButton.grid(row = 2, column = 4, padx = 5) #Grids the fourth card to the gameFrame.
+        cardFiveButton.grid(row = 2, column = 5, padx = 5) #Grids the fifth card to the gameFrame.
+        exitGameButton.grid(row = 0, column = 100) #Grids the exit game button to the gameFrame.
+        gameFrame.grid(row = 0, column = 0) #Grids the entire gameframe.
         return
 
+    #This is run when the user clicks the first card.
     def processCardOne(self):
-        if not (str(cardTwoButton["image"]) == str(self.getcardbackground())):
+        #Checks to make sure that a card has been dealt.
+        if not (str(cardOneButton["image"]) == str(self.getcardbackground())):
+            #Allows the user to mark a card to be held so that a new one is not dealt.
             cardOneButton["state"] = "disabled"
         return
 
+    #This is run when the user clicks the second card.
     def processCardTwo(self):
+        #Checks to make sure that a card has been dealt.
         if not (str(cardTwoButton["image"]) == str(self.getcardbackground())):
+            #Allows the user to mark a card to be held so that a new one is not dealt.
             cardTwoButton["state"] = "disabled"
         return
 
+    #This is run when the user clicks the third card.
     def processCardThree(self):
+        #Checks to make sure that a card has been dealt.
         if not (str(cardThreeButton["image"]) == str(self.getcardbackground())):
+            #Allows the user to mark a card to be held so that a new one is not dealt.
             cardThreeButton["state"] = "disabled"
         return
-
+    
+    #This is run when the user clicks the fourth card.
     def processCardFour(self):
+        #Checks to make sure that a card has been dealt.
         if not (str(cardFourButton["image"]) == str(self.getcardbackground())):
+            #Allows the user to mark a card to be held so that a new one is not dealt.
             cardFourButton["state"] = "disabled"
         return
 
+    #This is run when the user clicks the fifth card.
     def processCardFive(self):
+        #Checks to make sure that a card has been dealt.
         if not (str(cardFiveButton["image"]) == str(self.getcardbackground())):
+            #Allows the user to mark a card to be held so that a new one is not dealt.
             cardFiveButton["state"] = "disabled"
         return
 
+    #This is run when the user clicks on the deck card.
     def processCardDeck(self):
+        #Runs the deal function which deals a card to all "active" cards.
         self.deal()
         return
 
@@ -464,13 +579,11 @@ class Game:
         #Creates a button that shows the winnings table
         lbl = Label(gameFrame, text="Winnings Table", relief=RAISED)
         lbl.grid
-
         #Shows Text for Winnings Table
         wte = {250: "Royal Flush", 50: "Straight Flush",
                25: "Four of a Kind", 9: "Full House", 6: "Flush",
                4: "Straight", 3: "Three of a Kind", 2: "Two Pair",
                1: "Jacks or Higher"}
-
         return
 
     def point(self,hand): #point()function to calculate partial score
