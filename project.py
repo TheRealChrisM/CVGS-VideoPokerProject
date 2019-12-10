@@ -21,14 +21,6 @@ username = StringVar()
 password = StringVar()
 #Creates a stringVar for the response to a forgotten password screen.
 forgotPasswordInput = StringVar()
-#Stores the user's desired recovery question for registration
-recoveryQuestion = StringVar()
-#Stores the user's desired recovery answer for registration
-recoveryAnswer = StringVar()
-#Stores the user's first name for registration
-firstName = StringVar()
-#stores the user's last name for registration
-lastName = StringVar()
 #Creates a variable to store the correct response to the forgotten password screen.
 forgotPasswordInputAnswer = ""
 #Creates a variable to temporarily store the correct password for the user.
@@ -77,6 +69,7 @@ class Player:
 
    #Returns Password of the Player
     def getpassword(self):
+        self.__password = password
         return self.__password
 
     #adds a setbalance to the player
@@ -511,6 +504,18 @@ class Game:
         passwordHintEntry.grid(row = 1, column = 0) #Displays the entry box.
         passwordHintButton.grid(row = 2, column = 0) #Displays the button.
         forgotPasswordFrame.pack() #Packs in the frame so it can be seen.
+        forgotPasswordInputAnswer = savedUser.passwordhint()
+        correctPassword = savedUser.passwordhint()
+        passwordHintPromptText = savedUser.getpasswordhintQuestion()
+        passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText, wraplength = 250, justify = LEFT, pady = 5)
+        passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
+        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPasswordHint)
+        passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = check)
+        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPassword)
+        passwordHintPromptLabel.grid(row = 0, column = 0)
+        passwordHintEntry.grid(row = 1, column = 0)
+        passwordHintButton.grid(row = 2, column = 0)
+        forgotPasswordFrame.pack()
         return
     
     #A function that is used to check a submitted password hint response.
@@ -715,9 +720,7 @@ class Game:
             flag = False #Return false
             break
           else:
-            Currentrank -= 1 #Else, subtract one from the current card rank
-        if flag: #If true 
-            print('Royal Flush') #returns the total_point and prints out 'Royal Flush' if true  
+            Currentrank -= 1 #Else, subtract one from the current card rank 
         else:
           self.isStraightFlush(sortedHand) #if false, pass down to isStraightFlush(hand)
         return flag
@@ -735,10 +738,11 @@ class Game:
             break
           else:
             Currentrank -= 1 #Else, subtract one from the current card rank
-        if flag: #If true
-          print('Straight Flush') #returns the total_point and prints out 'Straight Flush' if true
+        if flag:#If true
+            flag = True
         else:
-          self.isFourOfAKind(sortedHand) #if false, pass down to isFour(hand)
+            self.isFourOfAKind(sortedHand) #if false, pass down to isFour(hand)
+        return flag
 
     def isFourOfAKind(self, sortedHand): #Creates a function if the user has four of a kind
         flag = True #Creates a variable that stores a Boolean value
@@ -751,7 +755,6 @@ class Game:
             count += 1 #Add 1 to the count
         if not count < 4: #If count is greater than 4
           flag = True #Returns true if the count is less than 4
-          print('Four of a Kind') #returns the total_point and prints out 'Four of a Kind' if true
         else:
             flag = False
             self.isFullHouse(sortedHand)#if false, pass down to isFull()
@@ -770,8 +773,6 @@ class Game:
         numrank2= mylist.count(rank2) #Creates a variable to store the value of the 2nd rank 
         if (numrank1==2 and numrank2==3)or (numrank1== 3 and numrank2== 2): #If the 1st rank is 2 and 2nd rank is 3, or 1st rank is 3 and 2nd rank is 2
           flag=True #Returns true
-          print('Full House') #returns the total_point and prints out 'Full House' if true
-          
         else:
           flag=False #Creates a variable that creates a False Boolean value
           self.isFlush(sortedHand) #if false, pass down to isFlush()
@@ -787,8 +788,7 @@ class Game:
             flag=False #Return False
             break
         if flag: #Returns true
-          print('Flush') #returns the total_point and prints out 'Flush' if true
-          
+            flag = True
         else:
           self.isStraight(sortedHand) #if false, pass down to isStraight()
         return flag
@@ -805,8 +805,7 @@ class Game:
           else:
             Currentrank -= 1 #Else, subtract one from the current card rank
         if flag: #Returns true
-          print('Straight') #Print Straight
-          
+            flag = True
         else:
           self.isThreeOfAKind(sortedHand)#if false, pass down to isThreeOfAKind(hand)
         return flag
@@ -822,8 +821,6 @@ class Game:
           mylist.append(card.rank) #Adds the card rank to the empty mylist
         if mylist.count(Currentrank)== 3: #If the current rank in mylist is equal to 3
           flag = True #Returns true
-          print ("Three of a Kind") #Print three of a kind
-          #self.tlist.append(total_point) #Adds the total amount of points to the empty list 
         else:
           flag=False #Return false
           self.isTwoPair(sortedHand) #if false, pass down to isTwoPair(hand)
@@ -841,8 +838,6 @@ class Game:
           mylist.append(card.rank) #Adds the card rank to the empty mylist
         if mylist.count(rank1)== 2 and mylist.count(rank2)== 2: #in a five cards sorted group, if isTwo(), the 2nd and 4th card should have another identical rank
           flag=True #Returns true
-          print ("Two Pair") #returns the total_point and prints out 'Two Pair' if true, 
-          #self.tlist.append(total_point) #Adds the total amount of points to the empty list 
         else:
           flag=False
           self.isJacks(sortedHand) #if false, pass down to isJacks(hand)
@@ -862,9 +857,6 @@ class Game:
           mycount.append(count) #Adds the count of each object to the mycount list
         if mycount.count(2)== 2 and mycount.count(1)== 3:  #There should be only 2 identical numbers and the rest are all different
           flag = True #Returns true
-          print("One Pair")#returns the total_point and prints out 'One Pair' if true
-          #self.tlist.append(total_point) #Adds the total amount of points to the empty list 
-          
         else:
           flag = False #Return false
         return flag
@@ -873,37 +865,29 @@ class Game:
         score = 0 #Initializes the scores
         if self.isRoyalFlush(hand): #Returns a score of 250 if it is a Royal Flush
             score += 250
-            print("1")
         if self.isStraightFlush(hand): #Returns a score of 50 if it is a Straight Flush
             score += 50
-            print("2")
         if self.isFourOfAKind(hand): #Returns a score of 25 if it is Four of a Kind
             score += 25
-            print("3")
         if self.isFullHouse(hand): #Returns a score of 9 if it is a Full House
             score += 9
-            print("4")
         if self.isFlush(hand): #Returns a score of 6 if it is a Flush
             score += 6
-            print("5")
         if self.isStraight(hand): #Returns a score of 4 if it is a Straight
             score += 4
-            print("6")
         if self.isThreeOfAKind(hand): #Returns a score of 3 if it is Three of a Kind
             score += 3
-            print("7")
         if self.isTwoPair(hand): #Returns a score of 2 if it is a Two Pair
             score += 2
-            print("8")
         if self.isJacks(hand): #Returns a score of a 1 if it is a Jacks
             score += 1
-            print("9")
         return score
+
 
     def nextRound(self):
         self.beginGame()
         return
-        
+
     def endgame(self):
         #Creates a Button that shows what each team member contributed
         teamButton = Button(gameFrame, text = "Click to show which team member did what", command = teammember)
