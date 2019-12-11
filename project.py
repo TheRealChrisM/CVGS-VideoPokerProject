@@ -267,6 +267,9 @@ class Game:
     #Deals a certain amount of cards to the players
     def deal(self):
         global increaseBetButton, decreaseBetButton, cardOneButton, cardTwoButton, cardThreeButton, cardFourButton, cardFiveButton
+        timeToEnd = self.getUser().getbalance() <= 0
+        if timeToEnd:
+            self.endgame()
         if (self.getDraws() < 2):
             #Checks to see if a user has marked a card to be held.
             if not (cardOneButton["state"] == "disabled"):
@@ -317,6 +320,8 @@ class Game:
             self.getUser().removebalance(self.currentBet())
             self.calculateHand()
             self.setDraws(0)
+            for i in range(5):
+                self.decreaseBet()
             increaseBetButton["state"] = "active"
             decreaseBetButton["state"] = "active"
             cardOneButton["state"] = "active"
@@ -324,9 +329,8 @@ class Game:
             cardThreeButton["state"] = "active"
             cardFourButton["state"] = "active"
             cardFiveButton["state"] = "active"
-
-            print("test")
-
+        
+        return 
     #Returns Face Down Card.
     def getcardbackground(self):
         #Returns the variable for a card that is face down.
@@ -889,16 +893,10 @@ class Game:
         return
 
     def endgame(self):
-        #Creates a Button that shows what each team member contributed
-        teamButton = Button(gameFrame, text = "Click to show which team member did what", command = teammember)
-        teamButton.grid(row)
+        messagebox.showinfo("Game Over", "You have lost! Closing the window!")
+        messagebox.showinfo("Credits", "William did the user class, card game logic such as Royal Flush, Straight Flush etc. while Chris did the user Login and password and gameplay.")
+        window.destroy()
         return
-
-    def teammember(self):
-        #Prints what each team member contributed
-        print("William did the user class, card game logic such as Royal Flush, Straight Flush etc. while Chris did the user Login and password and gameplay")
-
-
 
 #Add default users
 userList.append(Player("King", "Howard", "kh", "cvgs", "Is Computer Science a real Science?", "True"))
