@@ -12,9 +12,8 @@ window = Tk()
 loginFrame = Frame(window)
 forgotPasswordFrame = Frame(window)
 gameFrame = Frame(window)
-
+registerFrame = Frame(window)
 #Create general variables
-
 #Creates a StringVar for username to be used when logging in.
 username = StringVar()
 #Creates a StringVar for password to be used when logging in.
@@ -27,6 +26,14 @@ forgotPasswordInputAnswer = ""
 correctPassword = ""
 #Creates the userlist which will be used to store user accounts.
 userList = []
+#Creates a stringvar to save the recovery question when creating an account.
+recoveryQuestion = StringVar()
+#Creates a stringvar to save the recovery answer for creating an account.
+recoveryAnswer = StringVar()
+#Creates a stringvar to store the first name when creating an account.
+firstName = StringVar()
+#Creates a stringvar to store the last name when creating an account.
+lastName = StringVar()
 #Creates placeholder cardButton variables so they can be used between functions.
 cardOneButton = None
 cardTwoButton = None
@@ -69,7 +76,6 @@ class Player:
 
    #Returns Password of the Player
     def getpassword(self):
-        self.__password = password
         return self.__password
 
     #adds a setbalance to the player
@@ -114,18 +120,26 @@ class Card(): #Creates a class for the card deck
     def __init__ (self, rank, suit):
         self.rank = rank #Creates an initialized variable for the card ranks
         self.suit = suit #Creates an initialized variable for the card suits
+        if (suit == 0):
+            self.suit = self.suits[0]
+        elif (suit == 1):
+            self.suit = self.suits[2]
+        elif (suit == 2):
+            self.suit = self.suits[1]
+        elif (suit == 3 or suit == 4):
+            self.suit = self.suits[3]
 
     def __str__ (self):
         if self.rank == 1:
-          rank = 'A' #Returns as an Ace if the card rank is 14
-        elif self.rank == 13:
+          rank = 'A' #Returns as an Ace if the card rank is 1
+        elif self.rank == 13 or self.rank == 0:
           rank = 'K' #Returns as a King if the card rank is 13
         elif self.rank == 12:
           rank = 'Q' #Returns as a Queen if the card rank is 12
         elif self.rank == 11:
           rank = 'J' #Returns as a Jack if the card rank is 11
         else:
-          rank = self.rank #Otherwise, it returns the rank's number
+          rank = str(self.rank) #Otherwise, it returns the rank's number
         return str(rank) + self.suit #Returns a string of the rank and suit
 
 
@@ -192,6 +206,9 @@ class Game:
             #Changes the current bet label.
             currentBet["text"] = self.__curBet
         return
+    #A function which returns the userList
+    def getListOfUsers(self):
+        return self.__users
     
      #A fucntion which increases the user's bet by 1 if it is greater than zero.
     def decreaseBet(self):
@@ -239,7 +256,7 @@ class Game:
         randomCard = random.randint(0,51) #Creates a random card from 0 to 51
         while (self.drawn(randomCard)): #Makes sure that the card has not already been drawn.
            randomCard = random.randint(0,51) #If it has keep drawing random cards.
-        self.setDrawn(randomCard) #Once a new card has been drawn, set it to drawn so it is not drawn again.
+        self.setDrawn(randomCard)#Once a new card has been drawn, set it to drawn so it is not drawn again.
         return (randomCard + 1) #Return the card's number +1 to represent that the cards are picked from 0-51 and not 1-52.
 
     #Adds new cards to a player's hand
@@ -261,15 +278,33 @@ class Game:
     #Sets a card to drawn once it has been drawn
     def setDrawn(self, newcard):
         #Sets the appropriate index to true once it has been drawn.
-        self.__drawnCards[newcard] == True
+        self.__drawnCards[newcard] = True
         return
-    
+
+    #A function which checks to see if a shuffle is required
+    def checkShuffle(self):
+        cardsLeft = 0
+        for i in range(len(self.__drawnCards)):
+            if (self.__drawnCards[i] == False):
+                cardsLeft = cardsLeft + 1
+        if cardsLeft < 6:
+            for j in range(len(self.__drawnCards)):
+                self.__drawnCards[j] = False
+        return
+        
     #Deals a certain amount of cards to the players
     def deal(self):
+        #Global variables that are required because of limitations in tkinter
         global increaseBetButton, decreaseBetButton, cardOneButton, cardTwoButton, cardThreeButton, cardFourButton, cardFiveButton
+        #Determines if the user still has enough money to play.
         timeToEnd = self.getUser().getbalance() <= 0
+        #Makes sure the cards shouldn't be shuffled yet.
+        self.checkShuffle()
+        #If the user no longer has enough money.
         if timeToEnd:
+            #End the game and display the credits.
             self.endgame()
+        #Checks to see if the round is over yet.
         if (self.getDraws() < 2):
             #Checks to see if a user has marked a card to be held.
             if not (cardOneButton["state"] == "disabled"):
@@ -311,26 +346,44 @@ class Game:
                 self.setUserHandImage(4,4)
                 #Set the image to the card.
                 cardFiveButton["image"] = self.getUserHandImage(4)
+            #Changes the portion of the round the user is in for tracking purposes.
             self.setDraws(self.getDraws()+1)
+            #Makes it so the user can't increase their bet.
             increaseBetButton["state"] = "disabled"
+            #Makes it so the user can't decrease their bet.
             decreaseBetButton["state"] = "disabled"
+            #Checks to see how many times the user has drawn cards.
             if (self.getDraws() == 2):
+                #If more than two it runs the function again to end the round.
                 self.deal()
+        #If the user has finished the round.
         else:
+            #Remove the amount they betted from their account.
             self.getUser().removebalance(self.currentBet())
+            #Calculate the "Value" of their hand.
             self.calculateHand()
+            #Reset the draw counter for tracking purposes.
             self.setDraws(0)
+            #Set the bet back to 0.
             for i in range(5):
+                #Runs the decreaseBet function the maximum amount of times to ensure that the bet is back to zero.
                 self.decreaseBet()
+            #Allow the user to increase their bet again.
             increaseBetButton["state"] = "active"
+            #Allow the user to decrease their bet again.
             decreaseBetButton["state"] = "active"
+            #Enables the first card button again.
             cardOneButton["state"] = "active"
+            #Enables the second card button again.
             cardTwoButton["state"] = "active"
+            #Enables the third card button again.
             cardThreeButton["state"] = "active"
+            #Enables the fourth card button again.
             cardFourButton["state"] = "active"
+            #Enables the fifth card button again.
             cardFiveButton["state"] = "active"
-        
-        return 
+        return
+    
     #Returns Face Down Card.
     def getcardbackground(self):
         #Returns the variable for a card that is face down.
@@ -485,13 +538,13 @@ class Game:
         #Creates a boolean to represent whether a user has been found.
         userFound = False
         #Goes through the user list.
-        for i in range(len(userList)):
+        for i in range(len(self.getListOfUsers())):
                 #If the username matches.
-                if (userList[i].getusername() == selectedUser):
+                if (self.getListOfUsers()[i].getusername() == selectedUser):
                     #Indicate a user was found.
                     userFound = True
                     #Save the found user.
-                    savedUser = userList[i]
+                    savedUser = self.getListOfUsers()[i]
         #If the user was not found.
         if not userFound:
             #Display a message box informing them.
@@ -508,18 +561,6 @@ class Game:
         passwordHintEntry.grid(row = 1, column = 0) #Displays the entry box.
         passwordHintButton.grid(row = 2, column = 0) #Displays the button.
         forgotPasswordFrame.pack() #Packs in the frame so it can be seen.
-        forgotPasswordInputAnswer = savedUser.passwordhint()
-        correctPassword = savedUser.passwordhint()
-        passwordHintPromptText = savedUser.getpasswordhintQuestion()
-        passwordHintPromptLabel = Label(forgotPasswordFrame, text = passwordHintPromptText, wraplength = 250, justify = LEFT, pady = 5)
-        passwordHintEntry = Entry(forgotPasswordFrame, textvariable = forgotPasswordInput)
-        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPasswordHint)
-        passwordHintButton = Button(forgotPasswordFrame, text = SUBMIT, command = check)
-        passwordHintButton = Button(forgotPasswordFrame, text = "SUBMIT", command = self.checkPassword)
-        passwordHintPromptLabel.grid(row = 0, column = 0)
-        passwordHintEntry.grid(row = 1, column = 0)
-        passwordHintButton.grid(row = 2, column = 0)
-        forgotPasswordFrame.pack()
         return
     
     #A function that is used to check a submitted password hint response.
@@ -605,14 +646,6 @@ class Game:
         cardThreeButton.grid(row = 2, column = 3, padx = 5) #Grids the Card Three Button
         cardFourButton.grid(row = 2, column = 4, padx = 5) #Grids the Card Four Button
         cardFiveButton.grid(row = 2, column = 5, padx = 5) #Grids the Card Five Button
-        cardDeckButton.grid(row = 2, column = 0, padx = 50)
-        cardOneButton.grid(row = 2, column = 1, padx = 5)
-        cardTwoButton.grid(row = 2, column = 2, padx = 5)
-        cardThreeButton.grid(row = 2, column = 3, padx = 5)
-        cardFourButton.grid(row = 2, column = 4, padx = 5)
-        cardFiveButton.grid(row = 2, column = 5, padx = 5)
-        exitGameButton.grid(row = 0, column = 100)
-        gameFrame.grid(row = 0, column = 0)
         return
 
     #This is run when the user clicks the first card.
@@ -725,8 +758,6 @@ class Game:
             break
           else:
             Currentrank -= 1 #Else, subtract one from the current card rank 
-        else:
-          self.isStraightFlush(sortedHand) #if false, pass down to isStraightFlush(hand)
         return flag
 
 
@@ -745,7 +776,7 @@ class Game:
         if flag:#If true
             flag = True
         else:
-            self.isFourOfAKind(sortedHand) #if false, pass down to isFour(hand)
+            flag = False
         return flag
 
     def isFourOfAKind(self, sortedHand): #Creates a function if the user has four of a kind
@@ -761,7 +792,6 @@ class Game:
           flag = True #Returns true if the count is less than 4
         else:
             flag = False
-            self.isFullHouse(sortedHand)#if false, pass down to isFull()
         return flag
 
     def isFullHouse(self, sortedHand): #Creates a function if the user has a Full House
@@ -779,7 +809,6 @@ class Game:
           flag=True #Returns true
         else:
           flag=False #Creates a variable that creates a False Boolean value
-          self.isFlush(sortedHand) #if false, pass down to isFlush()
         return flag
 
     def isFlush(self, sortedHand): #Creates a function if the user has a Flush       
@@ -794,7 +823,7 @@ class Game:
         if flag: #Returns true
             flag = True
         else:
-          self.isStraight(sortedHand) #if false, pass down to isStraight()
+          flag = False
         return flag
 
     def isStraight(self, sortedHand): #Creates a function if the user has a straight
@@ -811,7 +840,7 @@ class Game:
         if flag: #Returns true
             flag = True
         else:
-          self.isThreeOfAKind(sortedHand)#if false, pass down to isThreeOfAKind(hand)
+            flag = False
         return flag
         
     def isThreeOfAKind(self, sortedHand): #Creates a function if the user has three of a kind
@@ -827,28 +856,26 @@ class Game:
           flag = True #Returns true
         else:
           flag=False #Return false
-          self.isTwoPair(sortedHand) #if false, pass down to isTwoPair(hand)
-        return flag
-        
-    def isTwoPair(self, sortedHand): #Creates a function if the user has a TwoPair
-       #sortedHand = sorted(hand,reverse=True) #Sorts the cards in the empty hand list 
-        flag = True #Creates a variable that stores a Boolean value
-        h=3 #Stores an integer value
-        total_point=h*13**5+self.point(sortedHand) #Returns the total points
-        rank1=sortedHand[1].rank #Rank of the 2nd card
-        rank2=sortedHand[3].rank #Rank of the 4th card
-        mylist=[] #create an empty list to store ranks
-        for card in sortedHand: #For each card in the sorted list 
-          mylist.append(card.rank) #Adds the card rank to the empty mylist
-        if mylist.count(rank1)== 2 and mylist.count(rank2)== 2: #in a five cards sorted group, if isTwo(), the 2nd and 4th card should have another identical rank
-          flag=True #Returns true
-        else:
-          flag=False
-          self.isJacks(sortedHand) #if false, pass down to isJacks(hand)
         return flag
 
-    def isJacks(self, sortedHand):#Creates a function if the user has Jacks                            
-        #sortedHand = sorted(hand, reverse = True) #Sorts the cards in the empty hand list
+    def isTwoPair(self, sortedHand):#Creates a function if the user has a TwoPair            
+        flag = True #Creates a variable that stores a Boolean value
+        h = 2 #Stores an integer value
+        totalpoint = h*13**5+self.point(sortedHand) #Returns the total points
+        mylist = [] #create an empty list to store ranks
+        mycount = [] #create an empty list to store number of count of each rank
+        for card in sortedHand: #For each card in sorted hand
+          mylist.append(card.rank) #Adds a sorted card to the empty list
+        for each in mylist: #For each card in mylist
+          count = mylist.count(each) #Returns the count of each object in the list
+          mycount.append(count) #Adds the count of each object to the mycount list
+        if mycount.count(2)== 4 and mycount.count(1)== 1:  #There should be only 2sets of identical numbers and the rest are all different
+          flag = True #Returns true
+        else:
+          flag = False #Return false
+        return flag
+
+    def isJacks(self, sortedHand):#Creates a function if the user has Jacks                
         flag = True #Creates a variable that stores a Boolean value
         h = 2 #Stores an integer value
         totalpoint = h*13**5+self.point(sortedHand) #Returns the total points
@@ -869,21 +896,21 @@ class Game:
         score = 0 #Initializes the scores
         if self.isRoyalFlush(hand): #Returns a score of 250 if it is a Royal Flush
             score += 250
-        if self.isStraightFlush(hand): #Returns a score of 50 if it is a Straight Flush
+        elif self.isStraightFlush(hand): #Returns a score of 50 if it is a Straight Flush
             score += 50
-        if self.isFourOfAKind(hand): #Returns a score of 25 if it is Four of a Kind
+        elif self.isFourOfAKind(hand): #Returns a score of 25 if it is Four of a Kind
             score += 25
-        if self.isFullHouse(hand): #Returns a score of 9 if it is a Full House
+        elif self.isFullHouse(hand): #Returns a score of 9 if it is a Full House
             score += 9
-        if self.isFlush(hand): #Returns a score of 6 if it is a Flush
+        elif self.isFlush(hand): #Returns a score of 6 if it is a Flush
             score += 6
-        if self.isStraight(hand): #Returns a score of 4 if it is a Straight
+        elif self.isStraight(hand): #Returns a score of 4 if it is a Straight
             score += 4
-        if self.isThreeOfAKind(hand): #Returns a score of 3 if it is Three of a Kind
+        elif self.isThreeOfAKind(hand): #Returns a score of 3 if it is Three of a Kind
             score += 3
-        if self.isTwoPair(hand): #Returns a score of 2 if it is a Two Pair
+        elif self.isTwoPair(hand): #Returns a score of 2 if it is a Two Pair
             score += 2
-        if self.isJacks(hand): #Returns a score of a 1 if it is a Jacks
+        elif self.isJacks(hand): #Returns a score of a 1 if it is a Jacks
             score += 1
         return score
 
